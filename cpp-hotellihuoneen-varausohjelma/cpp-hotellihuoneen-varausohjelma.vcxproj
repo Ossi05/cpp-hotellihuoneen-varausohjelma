@@ -125,10 +125,12 @@
   <ItemGroup>
     <ClCompile Include="Hotel.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Reservation.cpp" />
     <ClCompile Include="Room.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Hotel.h" />
+    <ClInclude Include="Reservation.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
