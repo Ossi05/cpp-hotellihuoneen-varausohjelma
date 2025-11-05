@@ -1,8 +1,11 @@
 #include <iostream>
-#include "utils.h"
+#include "Hotel.h"
+
 
 int main() {
-	std::cout << "Hotellihuoneen varausohjelma";
-	
+
+	Hotel hotel("C++ hotelli", 300);
+	std::cout << hotel;
+
 	return 0;
 }
