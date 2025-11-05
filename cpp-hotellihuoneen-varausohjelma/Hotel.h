@@ -10,15 +10,16 @@
 class Hotel : public IPrintable
 {
 private:
+	static std::vector<Room> generate_rooms(int num_rooms);
 	std::string name;
 	std::vector<Room> rooms;
-	const int max_rooms;
 
 public:
-	Hotel(const std::string& name, int max_rooms);
-	virtual void print(std::ostream& os) const override {
-		os << name << std::endl;
-	}
+	virtual void print(std::ostream& os) const override;
+
+	Hotel(const std::string& name, int rooms_to_generate);
+
+	int get_rooms_available_amt() const;
 
 };
 

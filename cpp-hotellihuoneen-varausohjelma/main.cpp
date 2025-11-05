@@ -4,7 +4,8 @@
 
 int main() {
 
-	Hotel hotel("C++ hotelli", 300);
+	std::setlocale(LC_ALL, "fi_FI");
+	Hotel hotel("C++ hotelli", 20);
 	std::cout << hotel;
 
 	return 0;
