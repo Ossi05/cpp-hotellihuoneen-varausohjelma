@@ -1,13 +1,16 @@
 #include <iostream>
-#include "Hotel.h"
+#include "HotelApp.h"
+#include <clocale>
 
 
 int main() {
 
 	std::setlocale(LC_ALL, "fi_FI");
-	Hotel hotel("C++ hotelli", 20);
-	std::cout << hotel;
-	hotel.print_menu_options();
+	HotelApp hotelApp{ "C++ hotelli", 20 };
+	std::cout << hotelApp;
+
+	hotelApp.print_menu_options();
+	hotelApp.get_handle_input();
 
 	return 0;
 }

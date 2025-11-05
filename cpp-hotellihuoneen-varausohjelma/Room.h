@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <unordered_map>
 
 enum class RoomType {
@@ -8,7 +7,7 @@ enum class RoomType {
 };
 
 class Room {
-		
+
 private:
 	static std::unordered_map<RoomType, double> prices;
 

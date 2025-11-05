@@ -1,9 +1,11 @@
 #include "Reservation.h"
+#include <string>
 
 Reservation::Reservation(const std::string& guest_name, int room_number, int num_nights, double normal_price, double sale_percentage) :
-	guest_name{ guest_name }, room_number{ room_number }, num_nights{ num_nights }, normal_price{ normal_price }, sale_percentage {
+	guest_name{ guest_name }, room_number{ room_number }, num_nights{ num_nights }, normal_price{ normal_price }, sale_percentage{
 	sale_percentage
-} {}
+	} {
+}
 
 double Reservation::get_total_price() const
 {
