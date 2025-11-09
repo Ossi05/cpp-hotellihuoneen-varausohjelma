@@ -43,3 +43,5 @@ T get_input(const std::string& msg, const std::string& error_msg = "Virheellinen
 	return value;
 }
 
+void clear_screen();
+void wait_for_input();
