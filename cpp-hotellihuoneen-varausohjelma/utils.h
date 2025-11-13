@@ -45,3 +45,5 @@ T get_input(const std::string& msg, const std::string& error_msg = "Virheellinen
 
 void clear_screen();
 void wait_for_input();
+int get_random_number(int min, int max);
+void print_line(char c, int width);
