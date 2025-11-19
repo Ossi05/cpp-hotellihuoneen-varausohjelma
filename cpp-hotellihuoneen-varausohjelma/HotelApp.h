@@ -17,14 +17,18 @@ private:
 	bool is_running;
 
 	// Valikon toiminnot
+	void handle_exit_program();
+
+	// Huoneet
+	void get_room_details() const;
+	void show_available_rooms() const;
+
+	// Varaukset
 	void create_reservation();
 	void show_reservations() const;
 	void find_reservation_by_id() const;
 	void find_reservation_by_name() const;
 	void remove_reservation() const;
-	void get_room_details() const;
-	void show_available_rooms() const;
-	void handle_exit_program();
 
 };
 

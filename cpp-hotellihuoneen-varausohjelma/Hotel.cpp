@@ -33,7 +33,11 @@ Hotel::Hotel(const std::string& name, int rooms_to_generate) :
 {
 }
 
-int Hotel::get_num_rooms_available() const
+/*
+	Huoneet
+*/
+// Palauttaa, montako huonetta on vapaana yhteensä
+size_t Hotel::get_num_rooms_available() const
 {
 	int num_available{ 0 };
 	for (const auto& pair : rooms_map) {
@@ -42,12 +46,55 @@ int Hotel::get_num_rooms_available() const
 
 	return num_available;
 }
-
-int Hotel::get_num_rooms_available(RoomType room_type) const
+// Palauttaa, montako huonetta on vapaana tietyssä huonetyypissä
+size_t Hotel::get_num_rooms_available(RoomType room_type) const
 {
 	return std::count_if(rooms_map.at(room_type).begin(), rooms_map.at(room_type).end(), [room_type](const std::shared_ptr<Room>& room) {return !room->is_occupied(); });
 }
 
+std::shared_ptr<Room> Hotel::get_available_room(RoomType room_type) const
+{
+	const auto& rooms = rooms_map.at(room_type);
+	auto result = std::find_if(
+		rooms.begin(), rooms.end(),
+		[](const std::shared_ptr<Room>& r) { return !r->is_occupied(); }
+	);
+
+	if (result == rooms.end()) {
+		throw std::runtime_error("Ei vapaita huoneita tässä huonetyypissä");
+	}
+
+	return *result;
+}
+
+int Hotel::get_num_rooms() const
+{
+	int num_rooms{ 0 };
+	for (const auto& pair : rooms_map) {
+		num_rooms += pair.second.size();
+	}
+	return num_rooms;
+}
+
+std::shared_ptr<Room> Hotel::get_room_by_number(int room_number)
+{
+	for (auto& pair : rooms_map) {
+		auto& rooms = pair.second;
+		auto result{
+			std::find_if(rooms.begin(), rooms.end(),
+				[room_number](const std::shared_ptr<Room>& r) {return r->get_room_number() == room_number; })
+		};
+		if (result != rooms.end()) {
+			return *result;
+		}
+	}
+
+	throw std::runtime_error("Huonetta ei löytynyt");
+}
+
+/*
+	Varaukset
+*/
 Reservation& Hotel::create_reservation(const int room_number, const std::string& guest_name, const int num_nights)
 {
 	// Tarkistetaan onko huoneita vapaana
@@ -90,36 +137,6 @@ const Reservation& Hotel::get_reservation_by_id(int reservation_id) const
 	throw std::runtime_error("Varausta ei löytynyt");
 }
 
-std::shared_ptr<Room> Hotel::get_available_room(RoomType room_type) const
-{
-	const auto& rooms = rooms_map.at(room_type);
-	auto result = std::find_if(
-		rooms.begin(), rooms.end(),
-		[](const std::shared_ptr<Room>& r) { return !r->is_occupied(); }
-	);
-
-	if (result == rooms.end()) {
-		throw std::runtime_error("Ei vapaita huoneita tässä huonetyypissä");
-	}
-
-	return *result;
-}
-
-std::shared_ptr<Room> Hotel::get_room_by_number(int room_number)
-{
-	for (auto& pair : rooms_map) {
-		auto& rooms = pair.second;
-		auto result{
-			std::find_if(rooms.begin(), rooms.end(),
-				[room_number](const std::shared_ptr<Room>& r) {return r->get_room_number() == room_number; })
-		};
-		if (result != rooms.end()) {
-			return *result;
-		}
-	}
-
-	throw std::runtime_error("Huonetta ei löytynyt");
-}
 
 void Hotel::list_reservations() const
 {
@@ -132,15 +149,6 @@ void Hotel::list_reservations() const
 	{
 		std::cout << reservation << std::endl;
 	}
-}
-
-int Hotel::get_num_rooms() const
-{
-	int num_rooms{ 0 };
-	for (const auto& pair : rooms_map) {
-		num_rooms += pair.second.size();
-	}
-	return num_rooms;
 }
 
 bool Hotel::reservation_id_exists(int id) const
@@ -180,5 +188,4 @@ void Hotel::print(std::ostream& os) const
 
 	print_line('=', HotelApp::print_width);
 	std::cout << std::endl;
-
 }

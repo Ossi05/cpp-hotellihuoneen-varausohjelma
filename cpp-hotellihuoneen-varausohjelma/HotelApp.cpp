@@ -11,7 +11,7 @@
 const int HotelApp::print_width{ 35 };
 
 HotelApp::HotelApp(const std::string& hotel_name, int num_rooms) : hotel{ hotel_name, num_rooms }, is_running{ true },
-menu{{
+menu{ {
 	{ "Luo varaus", [this]() { create_reservation(); } },
 	{ "Näytä kaikki varaukset", [this]() { show_reservations(); } },
 	{ "Hae varaus varausnumerolla", [this]() { find_reservation_by_id(); } },
@@ -74,7 +74,7 @@ void HotelApp::create_reservation()
 			[](int num) {return num >= 1 && num <= Room::room_type_data.size(); }) - 1 };
 
 		room_type = static_cast<RoomType>(input);
-		int num_rooms_available{ hotel.get_num_rooms_available(room_type) };
+		size_t num_rooms_available{ hotel.get_num_rooms_available(room_type) };
 		if (num_rooms_available != 0) {
 			// Vapaa huone löytyi
 			break;

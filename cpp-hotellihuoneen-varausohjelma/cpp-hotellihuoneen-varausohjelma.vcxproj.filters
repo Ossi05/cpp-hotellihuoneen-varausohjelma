@@ -59,17 +59,17 @@
     <ClInclude Include="HotelApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MenuOption.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="IPrintable.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="MenuOption.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
     <ClInclude Include="Menu.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

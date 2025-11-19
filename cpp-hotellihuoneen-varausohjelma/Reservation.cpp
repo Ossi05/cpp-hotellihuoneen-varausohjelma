@@ -2,6 +2,12 @@
 #include <string>
 #include "Room.h"
 
+
+bool operator==(const Reservation& lhs, const int id)
+{
+	return lhs.id == id;
+}
+
 Reservation::Reservation(
 	int id,
 	const std::string& guest_name,
@@ -10,8 +16,7 @@ Reservation::Reservation(
 	double normal_price,
 	double sale_percentage
 )
-	:
-	id{ id },
+	: id{ id },
 	guest_name{ guest_name },
 	room{ room },
 	num_nights{ num_nights },
@@ -28,6 +33,21 @@ double Reservation::get_total_price() const
 	return normal_price * (1 - sale_percentage / 100);
 }
 
+std::string Reservation::get_guest_name() const { return guest_name; }
+
+double Reservation::get_normal_price() const { return normal_price; }
+
+double Reservation::get_sale_percentage() const { return sale_percentage; }
+
+int Reservation::get_room_number() const {
+	if (auto r{ room.lock() }) {
+		return r->get_room_number();
+	}
+	else {
+		// Throw error
+	}
+}
+
 void Reservation::print(std::ostream& os) const
 {
 	const auto r{ room.lock() };
@@ -41,21 +61,4 @@ void Reservation::print(std::ostream& os) const
 		<< ". Varaaja: " << guest_name
 		<< ". Öitä: " << num_nights
 		<< ". Kokonaishinta: " << get_total_price() << " euroa, alennus: " << sale_percentage << "%.";
-}
-
-std::string Reservation::get_guest_name() const { return guest_name; }
-double Reservation::get_normal_price() const { return normal_price; }
-double Reservation::get_sale_percentage() const { return sale_percentage; }
-int Reservation::get_room_number() const {
-	if (auto r{ room.lock() }) {
-		return r->get_room_number();
-	}
-	else {
-		// Throw error
-	}
-}
-
-bool operator==(const Reservation& lhs, const int id)
-{
-	return lhs.id == id;
 }

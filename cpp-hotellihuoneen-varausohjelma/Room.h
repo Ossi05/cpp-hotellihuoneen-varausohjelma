@@ -21,6 +21,7 @@ private:
 	bool _is_occupied;
 public:
 	static std::unordered_map<RoomType, RoomTypeData> room_type_data;
+	static double get_price(RoomType type);
 
 	Room(int room_number, RoomType type, bool is_occupied = false);
 
@@ -29,9 +30,6 @@ public:
 	double get_price() const;
 	bool is_occupied() const;
 	void set_is_occupied(bool is_occupied);
-
-
-	static double get_price(RoomType type);
 
 };
 

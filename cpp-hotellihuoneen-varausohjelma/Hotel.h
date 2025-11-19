@@ -31,13 +31,15 @@ public:
 
 	Hotel(const std::string& name, int rooms_to_generate);
 
-	int get_num_rooms_available() const;
-	int get_num_rooms_available(RoomType room_type) const;
-
-	void list_reservations() const;
-	const Reservation& get_reservation_by_id(int reservation_id) const;
+	// Huoneet
+	size_t get_num_rooms_available() const;
+	size_t get_num_rooms_available(RoomType room_type) const;
 	std::shared_ptr<Room> get_available_room(RoomType room_type) const;
 	std::shared_ptr<Room> get_room_by_number(int room_number);
+
+	// Varaukset
+	void list_reservations() const;
+	const Reservation& get_reservation_by_id(int reservation_id) const;
 	Reservation& create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
 
 };
