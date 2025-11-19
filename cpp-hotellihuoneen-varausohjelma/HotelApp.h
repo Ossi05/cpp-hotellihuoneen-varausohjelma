@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "MenuOption.h"
+#include "Menu.h"
 
 class HotelApp
 {
@@ -11,14 +12,9 @@ public:
 	HotelApp(const std::string& hotel_name, int num_rooms);
 	void run();
 private:
-	std::vector <MenuOption> menu_options;
+	Menu menu;
 	Hotel hotel;
 	bool is_running;
-
-	void print_menu_options() const;
-	void handle_choice(int choice) const;
-	void print_title(const std::string title) const;
-	int get_menu_choice() const;
 
 	// Valikon toiminnot
 	void create_reservation();

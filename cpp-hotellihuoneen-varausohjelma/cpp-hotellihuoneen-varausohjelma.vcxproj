@@ -127,6 +127,7 @@
     <ClCompile Include="HotelApp.cpp" />
     <ClCompile Include="IPrintable.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Reservation.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="Hotel.h" />
     <ClInclude Include="HotelApp.h" />
     <ClInclude Include="IPrintable.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuOption.h" />
     <ClInclude Include="Reservation.h" />
     <ClInclude Include="Room.h" />
