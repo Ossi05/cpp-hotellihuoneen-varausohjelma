@@ -8,7 +8,6 @@
 class HotelApp
 {
 public:
-	static const int print_width;
 	HotelApp(const std::string& hotel_name, int num_rooms);
 	void run();
 private:

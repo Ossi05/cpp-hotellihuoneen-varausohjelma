@@ -23,7 +23,8 @@ private:
 	std::vector<Reservation> reservations;
 	std::vector<double> sale_percentages;
 
-	int get_num_rooms() const;
+	size_t get_num_rooms() const;
+	size_t get_num_rooms(RoomType room_type) const;
 	bool reservation_id_exists(int id) const;
 
 public:

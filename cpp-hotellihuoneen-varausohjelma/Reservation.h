@@ -31,6 +31,9 @@ public:
 	double get_normal_price() const;
 	double get_sale_percentage() const;
 	double get_total_price() const;
+	int get_id() const;
+	int get_num_nights() const;
+	RoomType get_room_type() const;
 
 	virtual void print(std::ostream& os) const override;
 	virtual ~Reservation() = default;

@@ -8,8 +8,6 @@
 #include "Room.h"
 
 
-const int HotelApp::print_width{ 35 };
-
 HotelApp::HotelApp(const std::string& hotel_name, int num_rooms) : hotel{ hotel_name, num_rooms }, is_running{ true },
 menu{ {
 	{ "Luo varaus", [this]() { create_reservation(); } },

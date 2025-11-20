@@ -6,7 +6,7 @@
 #include "utils.h"
 
 
-const int Menu::print_width{ 35 };
+const int Menu::print_width{ 50 };
 
 Menu::Menu(const std::vector<MenuOption>& options)
 	: menu_options{ options }

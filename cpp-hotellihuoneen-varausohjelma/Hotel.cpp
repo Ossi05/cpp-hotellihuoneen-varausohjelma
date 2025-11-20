@@ -10,6 +10,7 @@
 #include "utils.h"
 #include <memory>
 #include <unordered_map>
+#include <sstream>
 
 std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> Hotel::generate_rooms(int num_rooms)
 {
@@ -31,6 +32,12 @@ Hotel::Hotel(const std::string& name, int rooms_to_generate) :
 	reservations{},
 	sale_percentages{ 0, 10, 20 }
 {
+	for (size_t i{}; i < rooms_map.at(RoomType::Single).size(); i++) {
+		if (i % 3 == 0) {
+			// Feikki varauksia
+			create_reservation(i + 1, "Matti Meikäläinen", 2);
+		}
+	}
 }
 
 /*
@@ -67,7 +74,7 @@ std::shared_ptr<Room> Hotel::get_available_room(RoomType room_type) const
 	return *result;
 }
 
-int Hotel::get_num_rooms() const
+size_t Hotel::get_num_rooms() const
 {
 	int num_rooms{ 0 };
 	for (const auto& pair : rooms_map) {
@@ -75,6 +82,12 @@ int Hotel::get_num_rooms() const
 	}
 	return num_rooms;
 }
+
+size_t Hotel::get_num_rooms(RoomType room_type) const
+{
+	return rooms_map.at(room_type).size();
+}
+
 
 std::shared_ptr<Room> Hotel::get_room_by_number(int room_number)
 {
@@ -145,9 +158,27 @@ void Hotel::list_reservations() const
 		std::cout << "Ei varauksia." << std::endl;
 		return;
 	}
+
+	int field1_width{ 8 }, field2_width{ 25 }, field3_width{ 15 },
+		field4_width{ 10 };
+
+	int total_width{ field1_width + field2_width + field3_width + field4_width };
+
+	std::cout << std::endl << std::setw(field1_width) << std::left << "ID"
+		<< std::setw(field2_width) << std::left << "Varaaja"
+		<< std::setw(field3_width) << std::left << "Tyyppi"
+		<< std::setw(field4_width) << std::right << "Huone" << std::endl;
+	std::cout << std::setfill('-') << std::setw(total_width) << "" << std::setfill(' ') << std::endl;
+
 	for (const auto& reservation : reservations)
 	{
-		std::cout << reservation << std::endl;
+		std::cout << std::setw(field1_width) << std::left << reservation.get_id()
+			<< std::setw(field2_width) << std::left << reservation.get_guest_name()
+			<< std::setw(field3_width) << std::left << Room::room_type_data.at(reservation.get_room_type()).name
+			<< std::setw(field4_width) << std::right << reservation.get_room_number()
+			<< std::endl;
+
+		std::cout << std::endl;
 	}
 }
 
@@ -160,32 +191,46 @@ bool Hotel::reservation_id_exists(int id) const
 // Tulostus
 void Hotel::print(std::ostream& os) const
 {
-	const std::streamsize text_spacing_left{ 2 };
-	const std::streamsize border_width{ 2 };
+	const std::streamsize padding_left{ 2 };
+	const std::streamsize padding_right{ 4 };
 
-	const auto print_text = [&os, text_spacing_left](const std::string& text) {
+	static const auto print_text = [&os](const std::string& left_text, const std::string& right_text = "") {
 		os << "|"
-			<< std::setw(text_spacing_left) << " "
-			<< std::left << std::setw(HotelApp::print_width - text_spacing_left - border_width) << text
+			<< std::setw(padding_left) << " "
+			<< std::left << std::setw(Menu::print_width / 2 - padding_right) << left_text
+			<< std::right << std::setw(Menu::print_width / 2 - padding_right) << right_text
+			<< std::setw(padding_right) << " "
 			<< "|" << '\n';
 		os << std::right;
 		};
 
+	// Otsikko
 	print_text(name);
-	print_line('=', HotelApp::print_width);
+	print_line('=', Menu::print_width);
 
-	const int num_rooms{ get_num_rooms() };
-	const int rooms_available = get_num_rooms_available();
+	// Perustietoja
+	const size_t num_rooms{ get_num_rooms() };
+	const size_t rooms_available{ get_num_rooms_available() };
 	print_text("Huoneita 1-" + std::to_string(num_rooms));
 	print_text("Vapaana: " + std::to_string(rooms_available));
 	print_text("Varattu: " + std::to_string(num_rooms - rooms_available));
+
 	print_text("");
+
+
+	print_text("Tyyppi", "Vapaana");
+
+	std::cout << std::setfill('-') << std::setw(Menu::print_width) << "" << std::setfill(' ') << std::endl;
 
 	for (const auto& room : rooms_map)
 	{
-		print_text(Room::room_type_data.at(room.first).name + ": " + std::to_string(get_num_rooms_available(room.first)) + " jäljellä");
+		std::string available_text{
+			std::to_string(get_num_rooms_available(room.first))
+			+ "/"
+			+ std::to_string(get_num_rooms(room.first)) };
+		print_text(Room::room_type_data.at(room.first).name, available_text);
 	}
 
-	print_line('=', HotelApp::print_width);
+	print_line('=', Menu::print_width);
 	std::cout << std::endl;
 }

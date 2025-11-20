@@ -33,11 +33,27 @@ double Reservation::get_total_price() const
 	return normal_price * (1 - sale_percentage / 100);
 }
 
+int Reservation::get_id() const { return id; }
+
+int Reservation::get_num_nights() const
+{
+	return num_nights;
+}
+
 std::string Reservation::get_guest_name() const { return guest_name; }
 
 double Reservation::get_normal_price() const { return normal_price; }
 
 double Reservation::get_sale_percentage() const { return sale_percentage; }
+
+RoomType Reservation::get_room_type() const {
+	if (auto r{ room.lock() }) {
+		return r->get_room_type();
+	}
+
+	// TODO error handling
+}
+
 
 int Reservation::get_room_number() const {
 	if (auto r{ room.lock() }) {
