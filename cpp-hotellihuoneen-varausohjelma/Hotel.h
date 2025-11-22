@@ -20,7 +20,7 @@ private:
 
 	std::string name;
 	std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> rooms_map;
-	std::vector<Reservation> reservations;
+	std::unordered_map<int, std::shared_ptr<Reservation>> reservations_map;
 	std::vector<double> sale_percentages;
 
 	size_t get_num_rooms() const;
@@ -40,9 +40,10 @@ public:
 
 	// Varaukset
 	void list_reservations() const;
-	const Reservation& get_reservation_by_id(int reservation_id) const;
-	std::vector<const Reservation*> get_reservations_by_guest_name(const std::string& guest_name) const;
-	const Reservation& create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
+	std::shared_ptr<const Reservation> get_reservation_by_id(int reservation_id) const;
+	std::vector<std::shared_ptr<const Reservation>> get_reservations_by_guest_name(const std::string& guest_name) const;
+	std::shared_ptr<const Reservation> create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
+	void remove_reservation(int id);
 
 };
 

@@ -29,7 +29,7 @@ std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> Hotel::generate
 Hotel::Hotel(const std::string& name, int rooms_to_generate) :
 	name{ name },
 	rooms_map{ generate_rooms(rooms_to_generate) },
-	reservations{},
+	reservations_map{},
 	sale_percentages{ 0, 10, 20 }
 {
 	for (size_t i{}; i < rooms_map.at(RoomType::Single).size(); i++) {
@@ -108,7 +108,7 @@ std::shared_ptr<Room> Hotel::get_room_by_number(int room_number)
 /*
 	Varaukset
 */
-const Reservation& Hotel::create_reservation(const int room_number, const std::string& guest_name, const int num_nights)
+std::shared_ptr<const Reservation> Hotel::create_reservation(const int room_number, const std::string& guest_name, const int num_nights)
 {
 	// Tarkistetaan onko huoneita vapaana
 	if (get_num_rooms_available() == 0) {
@@ -120,7 +120,6 @@ const Reservation& Hotel::create_reservation(const int room_number, const std::s
 
 	// TODO Lisää montako kertaa yritetään luoda random id
 	while (reservation_id_exists(id)) {
-		std::cout << "Tetst";
 		id = get_random_number(min_reservation_id, max_reservation_id);
 	}
 
@@ -131,39 +130,60 @@ const Reservation& Hotel::create_reservation(const int room_number, const std::s
 	};
 
 	// Luodaan varaus
-	reservations.emplace_back(id,
+	auto reservation_ptr = std::make_shared<Reservation>(
+		id,
 		guest_name,
 		room,
 		num_nights,
 		room->get_price() * num_nights, // Hinta on huoneen hinta * yöt
-		sale_percentage);
+		sale_percentage
+	);
 
-	return reservations.back();
+	// Insert into map
+	reservations_map.emplace(id, reservation_ptr);
+
+	// Return the shared_ptr
+	return reservation_ptr;
 }
 
-const Reservation& Hotel::get_reservation_by_id(int reservation_id) const
+void Hotel::remove_reservation(int id)
 {
-	auto result{ std::find(reservations.begin(), reservations.end(), reservation_id) };
+	auto reservation = get_reservation_by_id(id);
+	auto room_number = reservation->get_room_number();
+	auto room = get_room_by_number(room_number);
 
-	if (result != reservations.end()) return *result;
+	// Vapautetaan huone
+	room->set_is_occupied(false);
+
+	// Poistetaan huone
+	reservations_map.erase(id);
+}
+
+std::shared_ptr<const Reservation> Hotel::get_reservation_by_id(int reservation_id) const
+{
+	auto result = reservations_map.find(reservation_id);
+	if (result != reservations_map.end()) {
+		return result->second;
+	}
 
 	throw std::runtime_error("Varausta ei löytynyt");
 }
 
-std::vector<const Reservation*> Hotel::get_reservations_by_guest_name(const std::string& guest_name) const
-{	
-	std::vector<const Reservation*> results;
-	for (const auto& reservation : reservations)
-	{	
-		if (to_lower(reservation.get_guest_name()).find(to_lower(guest_name)) == std::string::npos) continue;
-		results.push_back(&reservation);
+std::vector<std::shared_ptr<const Reservation>> Hotel::get_reservations_by_guest_name(const std::string& guest_name) const
+{
+	std::vector<std::shared_ptr<const Reservation>> results;
+	for (const auto& pair : reservations_map)
+	{
+		if (to_lower(pair.second->get_guest_name()).find(to_lower(guest_name)) == std::string::npos) continue;
+
+		results.push_back(pair.second);
 	}
 	return results;
 }
 
 void Hotel::list_reservations() const
 {
-	if (!reservations.size())
+	if (!reservations_map.size())
 	{
 		std::cout << "Ei varauksia." << std::endl;
 		return;
@@ -180,8 +200,9 @@ void Hotel::list_reservations() const
 		<< std::setw(field4_width) << std::right << "Huone" << std::endl;
 	std::cout << std::setfill('-') << std::setw(total_width) << "" << std::setfill(' ') << std::endl;
 
-	for (const auto& reservation : reservations)
-	{
+	for (const auto& pair : reservations_map)
+	{	
+		const Reservation& reservation{ *pair.second };
 		std::cout << std::setw(field1_width) << std::left << reservation.get_id()
 			<< std::setw(field2_width) << std::left << reservation.get_guest_name()
 			<< std::setw(field3_width) << std::left << Room::room_type_data.at(reservation.get_room_type()).name
@@ -194,8 +215,7 @@ void Hotel::list_reservations() const
 
 bool Hotel::reservation_id_exists(int id) const
 {
-	return std::any_of(reservations.begin(), reservations.end(),
-		[id](const Reservation& r) { return r == id; });
+	return reservations_map.find(id) != reservations_map.end();
 }
 
 // Tulostus
