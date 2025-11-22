@@ -3,6 +3,7 @@
 #include <string>
 #include <functional>
 #include <sstream>
+#include <string>
 
 /*
 	Kysyy käyttäjältä inputin ja palauttaa sen
@@ -47,3 +48,4 @@ void clear_screen();
 void wait_for_input();
 int get_random_number(int min, int max);
 void print_line(char c, int width);
+std::string to_lower(const std::string& str);

@@ -74,7 +74,6 @@ void Reservation::print(std::ostream& os) const
 		return;
 	}
 
-	os << std::endl;
 	os << "ID: " << id << std::endl;
 	os << "Varaaja: " << guest_name << std::endl;
 	os << "Huone: " << get_room_number() << " (" << Room::room_type_data.at(r->get_room_type()).name << ")" << std::endl;
@@ -82,6 +81,5 @@ void Reservation::print(std::ostream& os) const
 	os << "Normaalihinta: " << normal_price << " e"
 		<< "  |  Alennus: " << sale_percentage << "%"
 		<< "  |  Kokonaishinta: " << get_total_price() << " e" << std::endl;
-	os << std::endl;
-
+		
 }

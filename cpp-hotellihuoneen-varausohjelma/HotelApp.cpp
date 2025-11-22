@@ -13,7 +13,7 @@ menu{ {
 	{ "Luo varaus", [this]() { create_reservation(); } },
 	{ "Näytä kaikki varaukset", [this]() { show_reservations(); } },
 	{ "Hae varaus varausnumerolla", [this]() { find_reservation_by_id(); } },
-	{ "Hae varausta varaajan nimellä", [this]() { find_reservation_by_name(); } },
+	{ "Hae varauksia varaajan nimellä", [this]() { find_reservations_by_name(); } },
 	{ "Poista varaus", [this]() { remove_reservation(); } },
 	{ "Hae huoneen tiedot", [this]() { get_room_details(); } },
 	{ "Näytä vapaat huoneet", [this]() { show_available_rooms(); } },
@@ -103,14 +103,28 @@ void HotelApp::find_reservation_by_id() const
 	int reservation_id{ get_input<int>("Anna varausnumero: ") };
 	try {
 		const Reservation& reservation{ hotel.get_reservation_by_id(reservation_id) };
-		std::cout << reservation << std::endl;
+		std::cout << std::endl << reservation << std::endl;
 	}
-	catch (const std::exception& e) {
+	catch (const std::exception&) {
 		std::cerr << "Varausta ei löytynyt" << std::endl;
 	}
 }
-void HotelApp::find_reservation_by_name() const
+void HotelApp::find_reservations_by_name() const
 {
+	std::string guest_name{};
+	std::cout << "Anna varaajan nimi: ";
+	std::getline(std::cin, guest_name);
+	std::cout << std::endl << "Tulokset:\n" << std::endl;
+
+	std::vector<const Reservation*> reservations{ hotel.get_reservations_by_guest_name(guest_name) };
+	if (reservations.size() == 0) {
+		std::cout << "Varauksia ei löytynyt" << std::endl;
+		return;
+	}
+
+	for (const auto& reservation : reservations) {
+		std::cout << *reservation << std::endl;
+	}
 }
 void HotelApp::remove_reservation() const
 {

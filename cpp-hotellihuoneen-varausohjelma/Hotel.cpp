@@ -46,7 +46,7 @@ Hotel::Hotel(const std::string& name, int rooms_to_generate) :
 // Palauttaa, montako huonetta on vapaana yhteensä
 size_t Hotel::get_num_rooms_available() const
 {
-	int num_available{ 0 };
+	size_t num_available{ 0 };
 	for (const auto& pair : rooms_map) {
 		num_available += get_num_rooms_available(pair.first);
 	}
@@ -76,7 +76,7 @@ std::shared_ptr<Room> Hotel::get_available_room(RoomType room_type) const
 
 size_t Hotel::get_num_rooms() const
 {
-	int num_rooms{ 0 };
+	size_t num_rooms{ 0 };
 	for (const auto& pair : rooms_map) {
 		num_rooms += pair.second.size();
 	}
@@ -108,7 +108,7 @@ std::shared_ptr<Room> Hotel::get_room_by_number(int room_number)
 /*
 	Varaukset
 */
-Reservation& Hotel::create_reservation(const int room_number, const std::string& guest_name, const int num_nights)
+const Reservation& Hotel::create_reservation(const int room_number, const std::string& guest_name, const int num_nights)
 {
 	// Tarkistetaan onko huoneita vapaana
 	if (get_num_rooms_available() == 0) {
@@ -148,6 +148,17 @@ const Reservation& Hotel::get_reservation_by_id(int reservation_id) const
 	if (result != reservations.end()) return *result;
 
 	throw std::runtime_error("Varausta ei löytynyt");
+}
+
+std::vector<const Reservation*> Hotel::get_reservations_by_guest_name(const std::string& guest_name) const
+{	
+	std::vector<const Reservation*> results;
+	for (const auto& reservation : reservations)
+	{	
+		if (to_lower(reservation.get_guest_name()).find(to_lower(guest_name)) == std::string::npos) continue;
+		results.push_back(&reservation);
+	}
+	return results;
 }
 
 void Hotel::list_reservations() const

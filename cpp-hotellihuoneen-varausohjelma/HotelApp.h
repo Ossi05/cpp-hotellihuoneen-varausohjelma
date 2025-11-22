@@ -26,7 +26,7 @@ private:
 	void create_reservation();
 	void show_reservations() const;
 	void find_reservation_by_id() const;
-	void find_reservation_by_name() const;
+	void find_reservations_by_name() const;
 	void remove_reservation() const;
 
 };

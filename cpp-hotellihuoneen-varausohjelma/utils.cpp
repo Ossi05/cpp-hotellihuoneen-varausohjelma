@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <random>
 #include <iomanip>
+#include <string>
 
 void clear_screen()
 {
@@ -23,4 +24,11 @@ int get_random_number(int min, int max)
 void print_line(char c, int width)
 {
 	std::cout << std::setfill(c) << std::setw(width) << "" << std::endl << std::setfill(' ');
+}
+
+std::string to_lower(const std::string& str) {
+	std::string result{ str };
+	std::transform(result.begin(), result.end(), result.begin(),
+		[](char c) { return std::tolower(c); });
+	return result;
 }

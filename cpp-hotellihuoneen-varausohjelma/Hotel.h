@@ -41,7 +41,8 @@ public:
 	// Varaukset
 	void list_reservations() const;
 	const Reservation& get_reservation_by_id(int reservation_id) const;
-	Reservation& create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
+	std::vector<const Reservation*> get_reservations_by_guest_name(const std::string& guest_name) const;
+	const Reservation& create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
 
 };
 
