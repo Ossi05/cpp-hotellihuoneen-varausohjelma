@@ -100,6 +100,14 @@ void HotelApp::show_reservations() const
 }
 void HotelApp::find_reservation_by_id() const
 {
+	int reservation_id{ get_input<int>("Anna varausnumero: ") };
+	try {
+		const Reservation& reservation{ hotel.get_reservation_by_id(reservation_id) };
+		std::cout << reservation << std::endl;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Varausta ei löytynyt" << std::endl;
+	}
 }
 void HotelApp::find_reservation_by_name() const
 {
