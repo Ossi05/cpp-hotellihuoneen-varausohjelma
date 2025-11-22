@@ -60,7 +60,7 @@ void HotelApp::create_reservation()
 	std::cout << "Valitse huoneentyypi:\n";
 	for (const auto& room_data : Room::room_type_data) {
 		RoomType room_type = room_data.first;
-		int num_available = hotel.get_num_rooms_available(room_type);
+		size_t num_available{ hotel.get_num_rooms_available(room_type) };
 		std::cout << (static_cast<int>(room_type) + 1) << ": " << room_data.second.name << " (" << num_available << " kpl)" << std::endl;
 	}
 

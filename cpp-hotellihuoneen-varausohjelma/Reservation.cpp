@@ -1,6 +1,7 @@
 #include "Reservation.h"
 #include <string>
 #include "Room.h"
+#include <iomanip>
 
 
 bool operator==(const Reservation& lhs, const int id)
@@ -73,8 +74,14 @@ void Reservation::print(std::ostream& os) const
 		return;
 	}
 
-	os << "Huone " << get_room_number() << ", " << Room::room_type_data.at(r->get_room_type()).name
-		<< ". Varaaja: " << guest_name
-		<< ". Öitä: " << num_nights
-		<< ". Kokonaishinta: " << get_total_price() << " euroa, alennus: " << sale_percentage << "%.";
+	os << std::endl;
+	os << "ID: " << id << std::endl;
+	os << "Varaaja: " << guest_name << std::endl;
+	os << "Huone: " << get_room_number() << " (" << Room::room_type_data.at(r->get_room_type()).name << ")" << std::endl;
+	os << "Öitä: " << num_nights << std::endl;
+	os << "Normaalihinta: " << normal_price << " e"
+		<< "  |  Alennus: " << sale_percentage << "%"
+		<< "  |  Kokonaishinta: " << get_total_price() << " e" << std::endl;
+	os << std::endl;
+
 }

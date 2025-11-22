@@ -150,7 +150,6 @@ const Reservation& Hotel::get_reservation_by_id(int reservation_id) const
 	throw std::runtime_error("Varausta ei löytynyt");
 }
 
-
 void Hotel::list_reservations() const
 {
 	if (!reservations.size())
