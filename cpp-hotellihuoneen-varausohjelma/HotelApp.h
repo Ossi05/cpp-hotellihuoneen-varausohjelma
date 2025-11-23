@@ -8,7 +8,7 @@
 class HotelApp
 {
 public:
-	HotelApp(const std::string& hotel_name, int num_rooms);
+	HotelApp(const std::string& hotel_name, int num_rooms, const std::string& csv_file_name = "");
 	void run();
 private:
 	Menu menu;

@@ -8,7 +8,7 @@
 #include "Room.h"
 
 
-HotelApp::HotelApp(const std::string& hotel_name, int num_rooms) : hotel{ hotel_name, num_rooms }, is_running{ true },
+HotelApp::HotelApp(const std::string& hotel_name, int num_rooms, const std::string& csv_file_name) : hotel{ hotel_name, num_rooms, csv_file_name }, is_running{ true },
 menu{ {
 	{ "Luo varaus", [this]() { create_reservation(); } },
 	{ "Näytä kaikki varaukset", [this]() { show_reservations(); } },
@@ -140,6 +140,11 @@ void HotelApp::remove_reservation()
 void HotelApp::handle_exit_program()
 {
 	std::cout << "Poistutaan ohjelmasta..." << std::endl;
+	std::string csv_file_name{ hotel.get_csv_file_name() };
+	if (!csv_file_name.empty()) {
+		std::cout << "\nVaraukset tallennettu tiedostoon " << csv_file_name << std::endl;
+	}
+
 	is_running = false;
 }
 

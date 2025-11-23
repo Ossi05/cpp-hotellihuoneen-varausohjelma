@@ -2,7 +2,9 @@
 #include <string>
 #include "Room.h"
 #include <iomanip>
-
+#include <sstream>
+#include <vector>
+#include "utils.h"
 
 bool operator==(const Reservation& lhs, const int id)
 {
@@ -81,5 +83,21 @@ void Reservation::print(std::ostream& os) const
 	os << "Normaalihinta: " << normal_price << " e"
 		<< "  |  Alennus: " << sale_percentage << "%"
 		<< "  |  Kokonaishinta: " << get_total_price() << " e" << std::endl;
-		
+}
+
+std::string Reservation::to_csv() const
+{
+	if (auto r{ room.lock() }) {
+		std::ostringstream oss{};
+		oss << id << CSV_SEPERATOR
+			<< guest_name << CSV_SEPERATOR
+			<< r->get_room_number() << CSV_SEPERATOR
+			<< num_nights << CSV_SEPERATOR
+			<< normal_price << CSV_SEPERATOR
+			<< sale_percentage;
+		return oss.str();
+	}
+	else {
+		throw std::runtime_error("Varauksen huonetta ei löytynyt");
+	}
 }

@@ -26,18 +26,19 @@ std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> Hotel::generate
 	return rooms;
 }
 
-Hotel::Hotel(const std::string& name, int rooms_to_generate) :
+Hotel::Hotel(const std::string& name, int rooms_to_generate, const std::string& csv_file_name) :
 	name{ name },
 	rooms_map{ generate_rooms(rooms_to_generate) },
+	csv_file_name{ csv_file_name },
 	reservations_map{},
 	sale_percentages{ 0, 10, 20 }
 {
-	for (size_t i{}; i < rooms_map.at(RoomType::Single).size(); i++) {
-		if (i % 3 == 0) {
-			// Feikki varauksia
-			create_reservation(i + 1, "Matti Meikäläinen", 2);
-		}
-	}
+	load_reservations_from_csv();
+}
+
+Hotel::~Hotel()
+{	
+	save_reservations_to_csv();
 }
 
 /*
@@ -142,6 +143,10 @@ std::shared_ptr<const Reservation> Hotel::create_reservation(const int room_numb
 	// Insert into map
 	reservations_map.emplace(id, reservation_ptr);
 
+	if (!csv_file_name.empty()) {
+		save_reservation_to_csv(reservation_ptr);
+	}
+
 	// Return the shared_ptr
 	return reservation_ptr;
 }
@@ -157,6 +162,11 @@ void Hotel::remove_reservation(int id)
 
 	// Poistetaan huone
 	reservations_map.erase(id);
+}
+
+const std::string& Hotel::get_csv_file_name()
+{
+	return csv_file_name;
 }
 
 std::shared_ptr<const Reservation> Hotel::get_reservation_by_id(int reservation_id) const
@@ -216,6 +226,77 @@ void Hotel::list_reservations() const
 bool Hotel::reservation_id_exists(int id) const
 {
 	return reservations_map.find(id) != reservations_map.end();
+}
+
+void Hotel::add_reservation_from_csv_line(std::string csv_line)
+{
+		std::istringstream iss{ csv_line };
+		std::vector<std::string> items{};
+		std::string item{};
+
+		while (std::getline(iss, item, CSV_SEPERATOR)) {
+			items.push_back(item);
+		}
+
+		if (items.size() != 6) {
+			throw std::runtime_error("Virheellinen CSV-rivi varaukselle: " + csv_line);
+		}
+
+		int id{ std::stoi(items.at(0)) };
+		std::string guest_name{ items.at(1) };
+		int room_id{ std::stoi(items.at(2)) };
+		int num_nights{ std::stoi(items.at(3)) };
+		double normal_price{ std::stod(items.at(4)) };
+		double sale_percentage{ std::stod(items.at(5)) };
+		
+		if (reservation_id_exists(id)) {
+			throw std::runtime_error("Varauksen ID on jo olemassa: " + std::to_string(id));
+		}
+		auto room{ get_room_by_number(room_id) };
+		if (room->is_occupied()) {
+			throw std::runtime_error("Huone on jo varattu: " + std::to_string(room_id));
+		}
+
+		auto reservation_ptr = std::make_shared<Reservation>(
+			id,
+			guest_name,
+			room,
+			num_nights,
+			normal_price,
+			sale_percentage
+		);
+		reservations_map.emplace(id, reservation_ptr);
+		
+}
+
+void Hotel::load_reservations_from_csv()
+{
+	if (csv_file_name.empty()) return;
+	try {
+		auto data{ get_data_from_csv(csv_file_name) };
+		for (const auto& line : data) {
+			add_reservation_from_csv_line(line);
+		}
+	}
+	catch (const std::exception&) {
+		
+	}
+
+}
+
+void Hotel::save_reservation_to_csv(std::shared_ptr<const Reservation> reservation) const
+{
+	if (csv_file_name.empty()) return;
+	save_to_csv(reservation->to_csv(), csv_file_name);
+}
+
+void Hotel::save_reservations_to_csv() const
+{
+	if (csv_file_name.empty()) return;
+	clear_file(csv_file_name);
+	for (const auto& pair : reservations_map) {
+		save_reservation_to_csv(pair.second);
+	}
 }
 
 // Tulostus

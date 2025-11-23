@@ -37,6 +37,7 @@ public:
 
 	virtual void print(std::ostream& os) const override;
 	virtual ~Reservation() = default;
+	std::string to_csv() const;
 
 };
 

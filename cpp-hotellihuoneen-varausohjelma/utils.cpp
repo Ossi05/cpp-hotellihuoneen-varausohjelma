@@ -2,6 +2,10 @@
 #include <random>
 #include <iomanip>
 #include <string>
+#include <sstream>
+#include <fstream>
+
+const char CSV_SEPERATOR{ ',' };
 
 void clear_screen()
 {
@@ -31,4 +35,43 @@ std::string to_lower(const std::string& str) {
 	std::transform(result.begin(), result.end(), result.begin(),
 		[](char c) { return std::tolower(c); });
 	return result;
+}
+
+void save_to_csv(const std::string& text, const std::string& filename)
+{
+	std::ofstream out_file{ filename, std::ios::app };
+
+	if (!out_file) {
+		throw std::runtime_error("Tiedoston " + filename + " avaaminen epäonnistui!");
+	}
+
+	out_file << text << std::endl;
+	out_file.close();
+}
+
+void clear_file(const std::string& filename)
+{
+	std::ofstream out_file{ filename, std::ios::trunc };
+	if (!out_file) {
+		throw std::runtime_error("Tiedoston " + filename + " avaaminen epäonnistui!");
+	}
+	out_file.close();
+}
+
+std::vector<std::string> get_data_from_csv(const std::string& filename)
+{	
+	std::ifstream in_file{ filename };
+	
+	if (!in_file) {
+		throw std::runtime_error("Tiedostoa " + filename + " ei löytynyt!");
+	}
+
+	std::vector<std::string> data{};
+	std::string item{};
+	while (std::getline(in_file, item)) {
+		data.push_back(item);
+	}
+
+	in_file.close();
+	return data;
 }
