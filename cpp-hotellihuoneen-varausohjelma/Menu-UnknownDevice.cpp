@@ -4,9 +4,9 @@
 #include <iomanip>
 #include "MenuOption.h"
 #include "utils.h"
-#include "exceptions.hpp"
 
-const int Menu::print_width{ 45 };
+
+const int Menu::print_width{ 50 };
 
 Menu::Menu(const std::vector<MenuOption>& options)
 	: menu_options{ options }
@@ -36,9 +36,8 @@ int Menu::get_menu_choice() const
 
 void Menu::handle_choice(int choice) const
 {
-	if (choice > static_cast<int>(menu_options.size()) || choice < 0) {
-		throw MenuOptionNotFoundException();
-	}
+	// TODO VIRHEENKÄSITTELY
+
 	// Kutsutaan valittua toimintoa
 	const MenuOption& option{ menu_options.at(choice) };
 	print_title(option.name);

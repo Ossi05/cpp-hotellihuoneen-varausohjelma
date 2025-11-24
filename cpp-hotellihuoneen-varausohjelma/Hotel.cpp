@@ -11,6 +11,7 @@
 #include <memory>
 #include <unordered_map>
 #include <sstream>
+#include "exceptions.hpp"
 
 std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> Hotel::generate_rooms(int num_rooms)
 {
@@ -37,7 +38,7 @@ Hotel::Hotel(const std::string& name, int rooms_to_generate, const std::string& 
 }
 
 Hotel::~Hotel()
-{	
+{
 	save_reservations_to_csv();
 }
 
@@ -69,7 +70,7 @@ std::shared_ptr<Room> Hotel::get_available_room(RoomType room_type) const
 	);
 
 	if (result == rooms.end()) {
-		throw std::runtime_error("Ei vapaita huoneita tässä huonetyypissä");
+		throw RoomNotAvailableException{ "Ei vapaita huoneita tässä huonetyypissä" };
 	}
 
 	return *result;
@@ -103,7 +104,7 @@ std::shared_ptr<Room> Hotel::get_room_by_number(int room_number)
 		}
 	}
 
-	throw std::runtime_error("Huonetta ei löytynyt");
+	throw RoomNotFoundException{};
 }
 
 /*
@@ -113,8 +114,7 @@ std::shared_ptr<const Reservation> Hotel::create_reservation(const int room_numb
 {
 	// Tarkistetaan onko huoneita vapaana
 	if (get_num_rooms_available() == 0) {
-		std::cerr << "Huoneita ei ole vapaana" << std::endl;
-		throw std::runtime_error("Huoneita ei ole vapaana");
+		throw RoomNotAvailableException{ "Huoneita ei ole vapaana" };
 	}
 
 	int id{ get_random_number(min_reservation_id, max_reservation_id) };
@@ -176,7 +176,7 @@ std::shared_ptr<const Reservation> Hotel::get_reservation_by_id(int reservation_
 		return result->second;
 	}
 
-	throw std::runtime_error("Varausta ei löytynyt");
+	throw ReservationNotFoundException{};
 }
 
 std::vector<std::shared_ptr<const Reservation>> Hotel::get_reservations_by_guest_name(const std::string& guest_name) const
@@ -211,7 +211,7 @@ void Hotel::list_reservations() const
 	std::cout << std::setfill('-') << std::setw(total_width) << "" << std::setfill(' ') << std::endl;
 
 	for (const auto& pair : reservations_map)
-	{	
+	{
 		const Reservation& reservation{ *pair.second };
 		std::cout << std::setw(field1_width) << std::left << reservation.get_id()
 			<< std::setw(field2_width) << std::left << reservation.get_guest_name()
@@ -230,43 +230,43 @@ bool Hotel::reservation_id_exists(int id) const
 
 void Hotel::add_reservation_from_csv_line(std::string csv_line)
 {
-		std::istringstream iss{ csv_line };
-		std::vector<std::string> items{};
-		std::string item{};
+	std::istringstream iss{ csv_line };
+	std::vector<std::string> items{};
+	std::string item{};
 
-		while (std::getline(iss, item, CSV_SEPERATOR)) {
-			items.push_back(item);
-		}
+	while (std::getline(iss, item, CSV_SEPERATOR)) {
+		items.push_back(item);
+	}
 
-		if (items.size() != 6) {
-			throw std::runtime_error("Virheellinen CSV-rivi varaukselle: " + csv_line);
-		}
+	if (items.size() != 6) {
+		throw InvalidCSVFormatException{ "Virheellinen CSV-rivi: " + csv_line };
+	}
 
-		int id{ std::stoi(items.at(0)) };
-		std::string guest_name{ items.at(1) };
-		int room_id{ std::stoi(items.at(2)) };
-		int num_nights{ std::stoi(items.at(3)) };
-		double normal_price{ std::stod(items.at(4)) };
-		double sale_percentage{ std::stod(items.at(5)) };
-		
-		if (reservation_id_exists(id)) {
-			throw std::runtime_error("Varauksen ID on jo olemassa: " + std::to_string(id));
-		}
-		auto room{ get_room_by_number(room_id) };
-		if (room->is_occupied()) {
-			throw std::runtime_error("Huone on jo varattu: " + std::to_string(room_id));
-		}
+	int id{ std::stoi(items.at(0)) };
+	std::string guest_name{ items.at(1) };
+	int room_id{ std::stoi(items.at(2)) };
+	int num_nights{ std::stoi(items.at(3)) };
+	double normal_price{ std::stod(items.at(4)) };
+	double sale_percentage{ std::stod(items.at(5)) };
 
-		auto reservation_ptr = std::make_shared<Reservation>(
-			id,
-			guest_name,
-			room,
-			num_nights,
-			normal_price,
-			sale_percentage
-		);
-		reservations_map.emplace(id, reservation_ptr);
-		
+	if (reservation_id_exists(id)) {
+		throw ReservationIdAlreadyExistsException("Varauksen ID on jo olemassa: " + std::to_string(id));
+	}
+	auto room{ get_room_by_number(room_id) };
+	if (room->is_occupied()) {
+		throw RoomNotAvailableException{ "Huone " + std::to_string(room_id) + " on jo varattu!" };
+	}
+
+	auto reservation_ptr = std::make_shared<Reservation>(
+		id,
+		guest_name,
+		room,
+		num_nights,
+		normal_price,
+		sale_percentage
+	);
+	reservations_map.emplace(id, reservation_ptr);
+
 }
 
 void Hotel::load_reservations_from_csv()
@@ -278,10 +278,9 @@ void Hotel::load_reservations_from_csv()
 			add_reservation_from_csv_line(line);
 		}
 	}
-	catch (const std::exception&) {
-		
+	catch (const FileAccessException&) {
+		// Tiedostoa ei löytynyt
 	}
-
 }
 
 void Hotel::save_reservation_to_csv(std::shared_ptr<const Reservation> reservation) const
@@ -327,7 +326,6 @@ void Hotel::print(std::ostream& os) const
 	print_text("Varattu: " + std::to_string(num_rooms - rooms_available));
 
 	print_text("");
-
 
 	print_text("Tyyppi", "Vapaana");
 

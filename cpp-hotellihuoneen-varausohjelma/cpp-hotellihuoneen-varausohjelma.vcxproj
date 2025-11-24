@@ -133,6 +133,7 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="exceptions.hpp" />
     <ClInclude Include="Hotel.h" />
     <ClInclude Include="HotelApp.h" />
     <ClInclude Include="IPrintable.h" />

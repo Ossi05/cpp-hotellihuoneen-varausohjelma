@@ -6,6 +6,7 @@
 #include <string>
 #include "MenuOption.h"
 #include "Room.h"
+#include "exceptions.hpp"
 
 
 HotelApp::HotelApp(const std::string& hotel_name, int num_rooms, const std::string& csv_file_name) : hotel{ hotel_name, num_rooms, csv_file_name }, is_running{ true },
@@ -30,13 +31,23 @@ void HotelApp::run()
 
 	while (is_running)
 	{
-		clear_screen();
-		std::cout << hotel;
-		menu.print_menu_options();
-		int choice{ menu.get_menu_choice() };
-		clear_screen();
-		menu.handle_choice(choice - 1);
-		std::cout << std::endl;
+		try {
+			clear_screen();
+			std::cout << hotel;
+			menu.print_menu_options();
+			int choice{ menu.get_menu_choice() };
+			clear_screen();
+			menu.handle_choice(choice - 1);
+			std::cout << std::endl;
+		}
+		catch (const std::exception& e) {
+			clear_screen();
+			std::cerr << "Tapahtui virhe: " << e.what() << std::endl;
+		}
+		catch (...) {
+			clear_screen();
+			std::cerr << "Tapahtui tuntematon virhe." << std::endl;
+		}
 		wait_for_input();
 	}
 }
@@ -78,8 +89,10 @@ void HotelApp::create_reservation()
 		std::cout << "Huoneita ei vapaana." << std::endl;
 	};
 
+	int room_number{};
+
 	auto room{ hotel.get_available_room(room_type) };
-	int room_number = room->get_room_number();
+	room_number = room->get_room_number();
 
 	std::string guest_name{ get_input<std::string>("Varaajan nimi: ") };
 	int num_nights{ get_input<int>("Montako yötä?: ", "Öitä pitää olla vähintää yksi", false, [](int n) {return n >= 1; }) };
@@ -92,6 +105,7 @@ void HotelApp::create_reservation()
 	std::cout << "Huone: " << room_number << " varattu " << std::endl;
 	std::cout << "Hinta " << reservation->get_total_price() << " euroa (" << reservation->get_sale_percentage() << "% alennus)" << std::endl;
 }
+
 void HotelApp::show_reservations() const
 {
 	hotel.list_reservations();
@@ -103,7 +117,7 @@ void HotelApp::find_reservation_by_id() const
 		auto reservation{ hotel.get_reservation_by_id(reservation_id) };
 		std::cout << std::endl << *reservation << std::endl;
 	}
-	catch (const std::exception&) {
+	catch (const ReservationNotFoundException&) {
 		std::cerr << "Varausta ei löytynyt" << std::endl;
 	}
 }
@@ -131,7 +145,7 @@ void HotelApp::remove_reservation()
 		hotel.remove_reservation(reservation_id);
 		std::cout << "Varaus (" << reservation_id << ") poistettu" << std::endl;
 	}
-	catch (const std::exception&) {
+	catch (const ReservationNotFoundException&) {
 		std::cerr << "Varausta ei löytynyt" << std::endl;
 	}
 

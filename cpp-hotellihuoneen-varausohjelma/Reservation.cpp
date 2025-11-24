@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include "utils.h"
+#include "exceptions.hpp"
 
 bool operator==(const Reservation& lhs, const int id)
 {
@@ -28,6 +29,9 @@ Reservation::Reservation(
 {
 	if (auto r{ room.lock() }) {
 		r->set_is_occupied(true);
+	}
+	else {
+		throw RoomNotFoundException();
 	}
 }
 
@@ -53,8 +57,9 @@ RoomType Reservation::get_room_type() const {
 	if (auto r{ room.lock() }) {
 		return r->get_room_type();
 	}
-
-	// TODO error handling
+	else {
+		throw RoomNotFoundException();
+	}
 }
 
 
@@ -63,7 +68,7 @@ int Reservation::get_room_number() const {
 		return r->get_room_number();
 	}
 	else {
-		// Throw error
+		throw RoomNotFoundException();
 	}
 }
 
@@ -98,6 +103,6 @@ std::string Reservation::to_csv() const
 		return oss.str();
 	}
 	else {
-		throw std::runtime_error("Varauksen huonetta ei löytynyt");
+		throw RoomNotFoundException();
 	}
 }

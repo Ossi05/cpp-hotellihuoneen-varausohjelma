@@ -71,6 +71,9 @@
     <ClInclude Include="Menu.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="exceptions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="testi.csv" />
