@@ -17,11 +17,20 @@ std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> Hotel::generate
 {
 	std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> rooms;
 
-	for (int i = 0; i < num_rooms; i++)
+	int num_room_types{ static_cast<int>(Room::room_type_data.size()) };
+	int rooms_per_type{ num_rooms / num_room_types };
+	int extra_rooms{ num_rooms % num_room_types };
+
+	int room_number{ 1 };
+
+	for (int i = 0; i < num_room_types; i++)
 	{
-		// Huoneen numero ja tyyppi (parilliset yhden hengen, parittomat kahden hengen)
-		RoomType room_type{ i % 2 == 0 ? RoomType::Single : RoomType::Double };
-		rooms[room_type].push_back(std::make_shared<Room>(i + 1, room_type));
+		RoomType room_type{ static_cast<RoomType>(i) };
+		int rooms_to_create{ rooms_per_type + (i < extra_rooms ? 1 : 0) };
+		for (int j = 0; j < rooms_to_create; j++)
+		{
+			rooms[room_type].push_back(std::make_shared<Room>(room_number++, room_type));
+		}
 	}
 
 	return rooms;

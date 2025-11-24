@@ -4,7 +4,7 @@
 
 enum class RoomType {
 	Single,
-	Double
+	Double,
 };
 
 struct RoomTypeData {

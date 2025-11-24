@@ -18,7 +18,6 @@ int main() {
 		room_amt :
 		room_amt - (room_amt % 10);
 
-
 	std::setlocale(LC_ALL, "fi_FI");
 	HotelApp app{ hotel_name, room_amt, csv_file_name };
 	app.run();
