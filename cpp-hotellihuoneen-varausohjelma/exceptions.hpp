@@ -9,13 +9,6 @@ public:
 	virtual ~RoomNotFoundException() = default;
 };
 
-class RoomOccupiedException : public std::runtime_error {
-public:
-	explicit RoomOccupiedException(const std::string& msg = "Huone on jo varattu")
-		: std::runtime_error(msg) {}
-	virtual ~RoomOccupiedException() = default;
-};
-
 class MenuOptionNotFoundException : public std::runtime_error {
 public:
 	explicit MenuOptionNotFoundException(const std::string& msg = "Valittua valikkovaihtoehtoa ei löytynyt")
@@ -46,7 +39,7 @@ public:
 
 class RoomNotAvailableException : public std::runtime_error {
 public:
-	explicit RoomNotAvailableException(const std::string& msg = "Huonetta ei ole vapaana")
+	explicit RoomNotAvailableException(const std::string& msg = "Huone ei ole vapaana")
 		: std::runtime_error(msg) {}
 	virtual ~RoomNotAvailableException() = default;
 };
@@ -56,4 +49,11 @@ public:
 	explicit FileAccessException(const std::string& msg = "Tiedoston avaaminen epäonnistui")
 		: std::runtime_error(msg) {}
 	virtual ~FileAccessException() = default;
+};
+
+class ConfigKeyNotFoundException : public std::runtime_error {
+public:
+	explicit ConfigKeyNotFoundException(const std::string& msg = "Config avainta ei löytynyt")
+		: std::runtime_error(msg) {}
+	virtual ~ConfigKeyNotFoundException() = default;
 };

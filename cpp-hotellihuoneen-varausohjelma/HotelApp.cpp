@@ -9,24 +9,76 @@
 #include "exceptions.hpp"
 
 
-HotelApp::HotelApp(const std::string& hotel_name, int num_rooms, const std::string& csv_file_name) : hotel{ hotel_name, num_rooms, csv_file_name }, is_running{ true },
-menu{ {
-	{ "Luo varaus", [this]() { create_reservation(); } },
-	{ "N‰yt‰ kaikki varaukset", [this]() { show_reservations(); } },
-	{ "Hae varaus varausnumerolla", [this]() { find_reservation_by_id(); } },
-	{ "Hae varauksia varaajan nimell‰", [this]() { find_reservations_by_name(); } },
-	{ "Poista varaus", [this]() { remove_reservation(); } },
-	{ "Poistu ohjelmasta", [this]() { handle_exit_program(); }}
-} }
+Hotel HotelApp::loadHotelFromConfig()
 {
+	std::string hotel_name{ config.get_value("HOTEL_NAME") };
+	std::string total_room_amt_str{ config.get_value("TOTAL_ROOM_AMT") };
+	std::string csv_file_name = config.get_value("CSV_FILE_NAME");
 
+
+	int num_rooms{};
+	if (!total_room_amt_str.empty()) {
+		num_rooms = std::stoi(total_room_amt_str);
+		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
+	}
+	else {
+		// Arvotaan huonem‰‰r‰, jos avainta ei lˆydy
+		int min_rooms_amt{ std::stoi(config.get_value("MIN_ROOMS_AMT")) };
+		int max_rooms_amt{ std::stoi(config.get_value("MAX_ROOMS_AMT")) };
+
+		if (!min_rooms_amt || !max_rooms_amt) {
+			throw ConfigKeyNotFoundException{ "MIN_ROOMS_AMT tai MAX_ROOMS_AMT avainta ei lˆytynyt" };
+		}
+		num_rooms = get_random_number(min_rooms_amt, max_rooms_amt);
+
+		// Tehd‰‰n huonem‰‰r‰ jaolliseksi kymmenell‰, jotta se n‰ytt‰‰ selke‰mm‰lt‰
+		num_rooms =
+			num_rooms % 10 == 0 ?
+			num_rooms :
+			num_rooms - (num_rooms % 10);
+	}
+
+	return Hotel{ hotel_name, num_rooms, csv_file_name };
 }
+
+
+HotelApp::HotelApp(const std::string& config_file_name) :
+	config{ config_file_name },
+	hotel{ loadHotelFromConfig() },
+	is_running{ true },
+	menu{ {
+		{ "Luo varaus", [this]() { create_reservation(); } },
+		{ "N‰yt‰ kaikki varaukset", [this]() { show_reservations(); } },
+		{ "Hae varaus varausnumerolla", [this]() { find_reservation_by_id(); } },
+		{ "Hae varauksia varaajan nimell‰", [this]() { find_reservations_by_name(); } },
+		{ "Poista varaus", [this]() { remove_reservation(); } },
+		{ "Poistu ohjelmasta", [this]() { handle_exit_program(); }}
+	} }
+{
+}
+
 
 /*
 Hotellisovelluksen p‰‰ohjelma, joka suoritetaan alussa
 */
 void HotelApp::run()
 {
+	try {
+		hotel.load_reservations_from_csv();
+	}
+	catch (const ReservationIdAlreadyExistsException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		wait_for_input();
+	}
+	catch (const RoomNotFoundException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		wait_for_input();
+	}
+	catch (const RoomNotAvailableException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		wait_for_input();
+	}
+
 	is_running = true;
 
 	while (is_running)
@@ -40,7 +92,7 @@ void HotelApp::run()
 			menu.handle_choice(choice - 1);
 			std::cout << std::endl;
 		}
-		catch (const std::exception& e) {
+		catch (const std::exception& e) { // Virheit‰ ei pit‰isi koskaan tapahtua
 			clear_screen();
 			std::cerr << "Tapahtui virhe: " << e.what() << std::endl;
 		}
@@ -51,7 +103,6 @@ void HotelApp::run()
 		wait_for_input();
 	}
 }
-
 /*
 Valikon toiminnot
 */
@@ -156,6 +207,7 @@ void HotelApp::handle_exit_program()
 	std::cout << "Poistutaan ohjelmasta..." << std::endl;
 	std::string csv_file_name{ hotel.get_csv_file_name() };
 	if (!csv_file_name.empty()) {
+		hotel.save_reservations_to_csv();
 		std::cout << "\nVaraukset tallennettu tiedostoon " << csv_file_name << std::endl;
 	}
 

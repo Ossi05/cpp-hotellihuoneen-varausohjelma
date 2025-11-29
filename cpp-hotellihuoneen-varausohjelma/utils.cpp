@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 #include "exceptions.hpp"
+#include <algorithm>
+#include <cctype>
 
 const char CSV_SEPERATOR{ ',' };
 
@@ -75,4 +77,16 @@ std::vector<std::string> get_data_from_csv(const std::string& filename)
 
 	in_file.close();
 	return data;
+}
+
+void trim(std::string& str)
+{
+	// Poistetaan alusta välilyönnit
+	str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) {
+		return !std::isspace(ch);
+		}));
+	// Poistetaan lopusta välilyönnit
+	str.erase(std::find_if(str.rbegin(), str.rend(), [](unsigned char ch) {
+		return !std::isspace(ch);
+		}).base(), str.end());
 }

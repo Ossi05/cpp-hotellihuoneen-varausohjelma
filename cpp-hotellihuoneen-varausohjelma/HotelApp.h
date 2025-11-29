@@ -4,16 +4,21 @@
 #include <string>
 #include "MenuOption.h"
 #include "Menu.h"
+#include "Config.h"
 
 class HotelApp
 {
 public:
-	HotelApp(const std::string& hotel_name, int num_rooms, const std::string& csv_file_name = "");
+	HotelApp(const std::string& config_file_name);
 	void run();
 private:
+
+	Config config;
 	Menu menu;
 	Hotel hotel;
 	bool is_running;
+
+	Hotel loadHotelFromConfig();
 
 	// Valikon toiminnot
 	void handle_exit_program();
@@ -26,4 +31,3 @@ private:
 	void remove_reservation();
 
 };
-

@@ -43,12 +43,6 @@ Hotel::Hotel(const std::string& name, int rooms_to_generate, const std::string& 
 	reservations_map{},
 	sale_percentages{ 0, 10, 20 }
 {
-	load_reservations_from_csv();
-}
-
-Hotel::~Hotel()
-{
-	save_reservations_to_csv();
 }
 
 /*
@@ -259,7 +253,7 @@ void Hotel::add_reservation_from_csv_line(std::string csv_line)
 	double sale_percentage{ std::stod(items.at(5)) };
 
 	if (reservation_id_exists(id)) {
-		throw ReservationIdAlreadyExistsException("Varauksen ID on jo olemassa: " + std::to_string(id));
+		throw ReservationIdAlreadyExistsException("Varaus " + std::to_string(id) + " on jo olemassa");
 	}
 	auto room{ get_room_by_number(room_id) };
 	if (room->is_occupied()) {

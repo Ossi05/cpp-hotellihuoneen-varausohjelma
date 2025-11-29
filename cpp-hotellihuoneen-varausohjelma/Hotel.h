@@ -28,15 +28,12 @@ private:
 	size_t get_num_rooms(RoomType room_type) const;
 	bool reservation_id_exists(int id) const;
 	void add_reservation_from_csv_line(std::string csv_line);
-	void load_reservations_from_csv();
 	void save_reservation_to_csv(std::shared_ptr<const Reservation> reservation) const;
-	void save_reservations_to_csv() const;
-
 public:
 	virtual void print(std::ostream& os) const override;
 
 	Hotel(const std::string& name, int rooms_to_generate, const std::string& csv_file_name = "");
-	virtual ~Hotel();
+	virtual ~Hotel() = default;
 
 	// Huoneet
 	size_t get_num_rooms_available() const;
@@ -51,5 +48,8 @@ public:
 	std::shared_ptr<const Reservation> create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
 	void remove_reservation(int id);
 	const std::string& get_csv_file_name();
+
+	void load_reservations_from_csv();
+	void save_reservations_to_csv() const;
 };
 

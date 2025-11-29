@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Hotel.cpp" />
     <ClCompile Include="HotelApp.cpp" />
     <ClCompile Include="IPrintable.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Config.h" />
     <ClInclude Include="exceptions.hpp" />
     <ClInclude Include="Hotel.h" />
     <ClInclude Include="HotelApp.h" />
@@ -144,6 +146,7 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config.cfg" />
     <None Include="testi.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
