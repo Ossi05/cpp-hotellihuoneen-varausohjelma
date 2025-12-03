@@ -38,6 +38,7 @@ public:
 	size_t get_num_rooms_available(RoomType room_type) const;
 	std::shared_ptr<Room> get_available_room(RoomType room_type) const;
 	std::shared_ptr<Room> get_room_by_number(int room_number);
+	const std::string& get_name() const;
 
 	// Varaukset
 	void list_reservations() const;

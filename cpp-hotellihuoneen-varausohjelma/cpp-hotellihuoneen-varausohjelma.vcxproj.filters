@@ -19,21 +19,15 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{59b9d35a-610e-48db-a175-f632fbdee1e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Hotel">
+      <UniqueIdentifier>{342709a8-d740-4e83-bc76-26473a164c31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Hotel\Reservation">
+      <UniqueIdentifier>{e3217757-2fef-4e9d-b826-b7d9fd9205de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Room.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hotel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Reservation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HotelApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IPrintable.cpp">
@@ -48,11 +42,23 @@
     <ClCompile Include="Config.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="ReservationManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Hotel.cpp">
+      <Filter>Source Files\Hotel</Filter>
+    </ClCompile>
+    <ClCompile Include="HotelApp.cpp">
+      <Filter>Source Files\Hotel</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Source Files\Hotel</Filter>
     </ClCompile>
     <ClCompile Include="CSVReservationHandler.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Hotel\Reservation</Filter>
+    </ClCompile>
+    <ClCompile Include="Reservation.cpp">
+      <Filter>Source Files\Hotel\Reservation</Filter>
+    </ClCompile>
+    <ClCompile Include="ReservationManager.cpp">
+      <Filter>Source Files\Hotel\Reservation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

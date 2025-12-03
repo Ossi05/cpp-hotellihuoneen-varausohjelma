@@ -65,8 +65,8 @@ std::vector<std::shared_ptr<Reservation>> CSVReservationHandler::load_reservatio
 		return reservations;
 	}
 	catch (const FileAccessException&) {
-		// Tiedostoa ei löytynyt
-		throw;
+		// Tiedostoa ei löytynyt. Palautetaan tyhjä lista.
+		return reservations;
 	}
 	catch (const InvalidCSVFormatException& e) {
 		// Virheellinen CSV-muoto

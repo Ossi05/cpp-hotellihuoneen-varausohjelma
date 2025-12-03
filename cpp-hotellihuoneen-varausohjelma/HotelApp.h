@@ -34,5 +34,6 @@ private:
 	void find_reservation_by_id() const;
 	void find_reservations_by_name() const;
 	void remove_reservation();
+	void print_info() const;
 
 };

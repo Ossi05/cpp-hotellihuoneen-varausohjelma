@@ -108,6 +108,11 @@ std::shared_ptr<Room> Hotel::get_room_by_number(int room_number)
 	throw RoomNotFoundException{ "Huonetta " + std::to_string(room_number) + " ei löytynyt." };
 }
 
+const std::string& Hotel::get_name() const
+{
+	return name;
+}
+
 /*
 	Varaukset
 */

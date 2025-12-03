@@ -9,68 +9,6 @@
 #include "exceptions.hpp"
 
 
-Hotel HotelApp::loadHotelFromConfig()
-{
-	std::string hotel_name{ config.get_value("HOTEL_NAME") };
-	std::string total_room_amt_str{ config.get_value("TOTAL_ROOM_AMT") };
-
-	int num_rooms{};
-	if (!total_room_amt_str.empty()) {
-		num_rooms = std::stoi(total_room_amt_str);
-		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
-	}
-	else {
-		// Arvotaan huonemäärä, jos avainta ei löydy
-		int min_rooms_amt{ std::stoi(config.get_value("MIN_ROOMS_AMT")) };
-		int max_rooms_amt{ std::stoi(config.get_value("MAX_ROOMS_AMT")) };
-
-		if (!min_rooms_amt || !max_rooms_amt) {
-			throw ConfigKeyNotFoundException{ "MIN_ROOMS_AMT tai MAX_ROOMS_AMT avainta ei löytynyt" };
-		}
-		num_rooms = get_random_number(min_rooms_amt, max_rooms_amt);
-
-		// Tehdään huonemäärä jaolliseksi kymmenellä, jotta se näyttää selkeämmältä
-		num_rooms =
-			num_rooms % 10 == 0 ?
-			num_rooms :
-			num_rooms - (num_rooms % 10);
-		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
-	}
-	return Hotel{ hotel_name, num_rooms };
-
-}
-
-void HotelApp::load_reservations_from_csv()
-{
-	if (!has_csv_file) return;
-
-	try {
-		auto reservations{ csv_reservation_handler.load_reservations() };
-		for (const auto& reservation : reservations) {
-			// Yhdistetään varaukset huoneisiin
-			hotel.create_reservation(
-				reservation->get_room_number(),
-				reservation->get_guest_name(),
-				reservation->get_num_nights()
-			);
-		}
-	}
-	catch (const ReservationIdAlreadyExistsException& e) {
-		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		is_running = false;
-	}
-	catch (const RoomNotFoundException& e) {
-		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		is_running = false;
-	}
-	catch (const RoomNotAvailableException& e) {
-		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		is_running = false;
-	}
-
-}
-
-
 HotelApp::HotelApp(const std::string& config_file_name) :
 	config{ config_file_name },
 	has_csv_file{ !config.get_value("CSV_FILE_NAME").empty() },
@@ -78,6 +16,7 @@ HotelApp::HotelApp(const std::string& config_file_name) :
 	hotel{ loadHotelFromConfig() },
 	is_running{ true },
 	menu{ {
+		{ "Tietoa hotellista", [this]() { print_info(); }},
 		{ "Luo varaus", [this]() { create_reservation(); } },
 		{ "Näytä kaikki varaukset", [this]() { show_reservations(); } },
 		{ "Hae varaus varausnumerolla", [this]() { find_reservation_by_id(); } },
@@ -223,6 +162,13 @@ void HotelApp::remove_reservation()
 
 }
 
+void HotelApp::print_info() const
+{
+	std::cout << "Tiedostoon tallennus käytössä: "
+		<< (has_csv_file ? "Kyllä (" + csv_reservation_handler.get_file_name() + ")" : "Ei") << std::endl;
+	std::cout << "Hotellin nimi: " << hotel.get_name() << std::endl;
+}
+
 void HotelApp::handle_exit_program()
 {
 	std::cout << "Poistutaan ohjelmasta..." << std::endl;
@@ -234,4 +180,65 @@ void HotelApp::handle_exit_program()
 
 	is_running = false;
 }
+
+Hotel HotelApp::loadHotelFromConfig()
+{
+	std::string hotel_name{ config.get_value("HOTEL_NAME") };
+	std::string total_room_amt_str{ config.get_value("TOTAL_ROOM_AMT") };
+
+	int num_rooms{};
+	if (!total_room_amt_str.empty()) {
+		num_rooms = std::stoi(total_room_amt_str);
+		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
+	}
+	else {
+		// Arvotaan huonemäärä, jos avainta ei löydy
+		int min_rooms_amt{ std::stoi(config.get_value("MIN_ROOMS_AMT")) };
+		int max_rooms_amt{ std::stoi(config.get_value("MAX_ROOMS_AMT")) };
+
+		if (!min_rooms_amt || !max_rooms_amt) {
+			throw ConfigKeyNotFoundException{ "MIN_ROOMS_AMT tai MAX_ROOMS_AMT avainta ei löytynyt" };
+		}
+		num_rooms = get_random_number(min_rooms_amt, max_rooms_amt);
+
+		// Tehdään huonemäärä jaolliseksi kymmenellä, jotta se näyttää selkeämmältä
+		num_rooms =
+			num_rooms % 10 == 0 ?
+			num_rooms :
+			num_rooms - (num_rooms % 10);
+		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
+	}
+	return Hotel{ hotel_name, num_rooms };
+
+}
+
+void HotelApp::load_reservations_from_csv()
+{
+	if (!has_csv_file) return;
+
+	try {
+		auto reservations{ csv_reservation_handler.load_reservations() };
+		for (const auto& reservation : reservations) {
+			// Yhdistetään varaukset huoneisiin
+			hotel.create_reservation(
+				reservation->get_room_number(),
+				reservation->get_guest_name(),
+				reservation->get_num_nights()
+			);
+		}
+	}
+	catch (const ReservationIdAlreadyExistsException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		is_running = false;
+	}
+	catch (const RoomNotFoundException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		is_running = false;
+	}
+	catch (const RoomNotAvailableException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		is_running = false;
+	}
+}
+
 
