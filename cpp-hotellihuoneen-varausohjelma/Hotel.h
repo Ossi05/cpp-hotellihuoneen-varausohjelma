@@ -8,6 +8,7 @@
 #include "Reservation.h"
 #include <unordered_map>
 #include <memory>
+#include "ReservationManager.h"
 
 
 class Hotel : public IPrintable
@@ -18,21 +19,18 @@ private:
 	int min_reservation_id{ 10000 };
 	int max_reservation_id{ 99999 };
 
+	ReservationManager reservation_manager;
 	std::string name;
 	std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> rooms_map;
-	std::unordered_map<int, std::shared_ptr<Reservation>> reservations_map;
 	std::vector<double> sale_percentages;
-	std::string csv_file_name;
 
 	size_t get_num_rooms() const;
 	size_t get_num_rooms(RoomType room_type) const;
 	bool reservation_id_exists(int id) const;
-	void add_reservation_from_csv_line(std::string csv_line);
-	void save_reservation_to_csv(std::shared_ptr<const Reservation> reservation) const;
 public:
 	virtual void print(std::ostream& os) const override;
 
-	Hotel(const std::string& name, int rooms_to_generate, const std::string& csv_file_name = "");
+	Hotel(const std::string& name, int rooms_to_generate);
 	virtual ~Hotel() = default;
 
 	// Huoneet
@@ -47,9 +45,6 @@ public:
 	std::vector<std::shared_ptr<const Reservation>> get_reservations_by_guest_name(const std::string& guest_name) const;
 	std::shared_ptr<const Reservation> create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
 	void remove_reservation(int id);
-	const std::string& get_csv_file_name();
-
-	void load_reservations_from_csv();
-	void save_reservations_to_csv() const;
+	std::vector<std::shared_ptr<const Reservation>> get_all_reservations() const;
 };
 

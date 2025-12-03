@@ -5,6 +5,7 @@
 #include "MenuOption.h"
 #include "Menu.h"
 #include "Config.h"
+#include "CSVReservationHandler.h"
 
 class HotelApp
 {
@@ -15,10 +16,14 @@ private:
 
 	Config config;
 	Menu menu;
+	CSVReservationHandler csv_reservation_handler;
 	Hotel hotel;
+	bool has_csv_file;
 	bool is_running;
 
+
 	Hotel loadHotelFromConfig();
+	void load_reservations_from_csv();
 
 	// Valikon toiminnot
 	void handle_exit_program();

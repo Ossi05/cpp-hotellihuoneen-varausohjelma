@@ -13,7 +13,6 @@ Hotel HotelApp::loadHotelFromConfig()
 {
 	std::string hotel_name{ config.get_value("HOTEL_NAME") };
 	std::string total_room_amt_str{ config.get_value("TOTAL_ROOM_AMT") };
-	std::string csv_file_name = config.get_value("CSV_FILE_NAME");
 
 	int num_rooms{};
 	if (!total_room_amt_str.empty()) {
@@ -35,14 +34,47 @@ Hotel HotelApp::loadHotelFromConfig()
 			num_rooms % 10 == 0 ?
 			num_rooms :
 			num_rooms - (num_rooms % 10);
+		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
+	}
+	return Hotel{ hotel_name, num_rooms };
+
+}
+
+void HotelApp::load_reservations_from_csv()
+{
+	if (!has_csv_file) return;
+
+	try {
+		auto reservations{ csv_reservation_handler.load_reservations() };
+		for (const auto& reservation : reservations) {
+			// Yhdistetään varaukset huoneisiin
+			hotel.create_reservation(
+				reservation->get_room_number(),
+				reservation->get_guest_name(),
+				reservation->get_num_nights()
+			);
+		}
+	}
+	catch (const ReservationIdAlreadyExistsException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		is_running = false;
+	}
+	catch (const RoomNotFoundException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		is_running = false;
+	}
+	catch (const RoomNotAvailableException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+		is_running = false;
 	}
 
-	return Hotel{ hotel_name, num_rooms, csv_file_name };
 }
 
 
 HotelApp::HotelApp(const std::string& config_file_name) :
 	config{ config_file_name },
+	has_csv_file{ !config.get_value("CSV_FILE_NAME").empty() },
+	csv_reservation_handler{ config.get_value("CSV_FILE_NAME") },
 	hotel{ loadHotelFromConfig() },
 	is_running{ true },
 	menu{ {
@@ -62,23 +94,9 @@ Hotellisovelluksen pääohjelma, joka suoritetaan alussa
 */
 void HotelApp::run()
 {
-	try {
-		hotel.load_reservations_from_csv();
-	}
-	catch (const ReservationIdAlreadyExistsException& e) {
-		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		wait_for_input();
-	}
-	catch (const RoomNotFoundException& e) {
-		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		wait_for_input();
-	}
-	catch (const RoomNotAvailableException& e) {
-		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		wait_for_input();
-	}
-
 	is_running = true;
+
+	load_reservations_from_csv();
 
 	while (is_running)
 	{
@@ -151,9 +169,12 @@ void HotelApp::create_reservation()
 	auto reservation{
 		hotel.create_reservation(room_number, guest_name, num_nights)
 	};
+	csv_reservation_handler.save_reservation(reservation); // Tallennetaan varaus CSV-tiedostoon
+
 	std::cout << std::endl;
 	std::cout << "Huone: " << room_number << " varattu " << std::endl;
 	std::cout << "Hinta " << reservation->get_total_price() << " euroa (" << reservation->get_sale_percentage() << "% alennus)" << std::endl;
+
 }
 
 void HotelApp::show_reservations() const
@@ -193,6 +214,7 @@ void HotelApp::remove_reservation()
 	int reservation_id{ get_input<int>("Anna varausnumero: ") };
 	try {
 		hotel.remove_reservation(reservation_id);
+		csv_reservation_handler.remove_reservation(reservation_id); // Poistetaan varaus CSV-tiedostosta
 		std::cout << "Varaus (" << reservation_id << ") poistettu" << std::endl;
 	}
 	catch (const ReservationNotFoundException&) {
@@ -204,9 +226,9 @@ void HotelApp::remove_reservation()
 void HotelApp::handle_exit_program()
 {
 	std::cout << "Poistutaan ohjelmasta..." << std::endl;
-	std::string csv_file_name{ hotel.get_csv_file_name() };
+	std::string csv_file_name{ csv_reservation_handler.get_file_name() };
 	if (!csv_file_name.empty()) {
-		hotel.save_reservations_to_csv();
+		csv_reservation_handler.save_all(hotel.get_all_reservations()); // Tallennetaan kaikki varaukset CSV-tiedostoon
 		std::cout << "\nVaraukset tallennettu tiedostoon " << csv_file_name << std::endl;
 	}
 

@@ -19,6 +19,8 @@ private:
 	const double sale_percentage;
 
 public:
+	static Reservation from_csv(const std::string& csv_line);
+
 	Reservation(int id,
 		const std::string& guest_name,
 		int room_number,

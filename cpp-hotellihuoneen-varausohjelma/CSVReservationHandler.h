@@ -1,0 +1,20 @@
+#pragma once
+#include <string>
+#include "Reservation.h"
+#include <vector>
+#include <memory>
+
+class CSVReservationHandler
+{
+private:
+	std::string file_name;
+public:
+	CSVReservationHandler(const std::string& file_name);
+	void save_reservation(std::shared_ptr<const Reservation> reservation) const;
+	void save_all(const std::vector<std::shared_ptr<const Reservation>>& reservations) const;
+	void remove_reservation(int id) const;
+	void clear() const;
+	std::vector<std::shared_ptr<Reservation>> load_reservations() const;
+	std::string get_file_name() const;
+};
+

@@ -124,17 +124,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="CSVReservationHandler.cpp" />
     <ClCompile Include="Hotel.cpp" />
     <ClCompile Include="HotelApp.cpp" />
     <ClCompile Include="IPrintable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Reservation.cpp" />
+    <ClCompile Include="ReservationManager.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="CSVReservationHandler.h" />
     <ClInclude Include="exceptions.hpp" />
     <ClInclude Include="Hotel.h" />
     <ClInclude Include="HotelApp.h" />
@@ -142,6 +145,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuOption.h" />
     <ClInclude Include="Reservation.h" />
+    <ClInclude Include="ReservationManager.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

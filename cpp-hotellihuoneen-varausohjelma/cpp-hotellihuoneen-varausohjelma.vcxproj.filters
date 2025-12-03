@@ -48,6 +48,12 @@
     <ClCompile Include="Config.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
+    <ClCompile Include="ReservationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CSVReservationHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Room.h">
@@ -79,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ReservationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSVReservationHandler.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
