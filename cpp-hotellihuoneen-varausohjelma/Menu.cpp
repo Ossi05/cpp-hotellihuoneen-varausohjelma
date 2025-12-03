@@ -5,8 +5,26 @@
 #include "MenuOption.h"
 #include "utils.h"
 #include "exceptions.hpp"
+#include <iostream>
+#include <string>
 
 const int Menu::print_width{ 45 };
+
+const void Menu::print_two_col_text(const std::string& text_left, const std::string& text_right)
+{
+	const std::streamsize padding_left{ 2 };
+	const std::streamsize padding_right{ 4 };
+	const std::string seperator{ "|" };
+
+	std::cout << two_column_text(
+		Menu::print_width,
+		text_left,
+		padding_left,
+		seperator,
+		text_right,
+		padding_right
+	);
+}
 
 Menu::Menu(const std::vector<MenuOption>& options)
 	: menu_options{ options }

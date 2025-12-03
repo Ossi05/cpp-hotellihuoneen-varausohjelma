@@ -164,9 +164,22 @@ void HotelApp::remove_reservation()
 
 void HotelApp::print_info() const
 {
-	std::cout << "Tiedostoon tallennus käytössä: "
+	std::cout << "Tiedostoon tallennus: "
 		<< (has_csv_file ? "Kyllä (" + csv_reservation_handler.get_file_name() + ")" : "Ei") << std::endl;
-	std::cout << "Hotellin nimi: " << hotel.get_name() << std::endl;
+	std::cout << "Hotellin nimi: " << hotel.get_name() << std::endl << std::endl;
+	std::cout
+		<< "Varaus ID (min "
+		<< hotel.get_min_reservation_id() << ", max " << hotel.get_max_reservation_id()
+		<< ")"
+		<< std::endl;
+	auto sale_percentages{ hotel.get_sale_percentages() };
+	std::cout << "Mahdolliset aleprosentit: ";
+	std::cout << std::fixed << std::setprecision(2);
+	std::cout << sale_percentages.at(0);
+	for (size_t i = 1; i < sale_percentages.size(); ++i) {
+		std::cout << ", " << sale_percentages.at(i);
+	}
+	std::cout << "%" << std::endl;
 }
 
 void HotelApp::handle_exit_program()
@@ -184,31 +197,18 @@ void HotelApp::handle_exit_program()
 Hotel HotelApp::loadHotelFromConfig()
 {
 	std::string hotel_name{ config.get_value("HOTEL_NAME") };
-	std::string total_room_amt_str{ config.get_value("TOTAL_ROOM_AMT") };
+	int num_rooms{ get_num_rooms_from_config() };
+	int min_reservation_id{ std::stoi(config.get_value("MIN_RESERVATION_ID")) };
+	int max_reservation_id{ std::stoi(config.get_value("MAX_RESERVATION_ID")) };
+	std::vector<double> sale_percentages{ get_sale_percentages_from_config() };
 
-	int num_rooms{};
-	if (!total_room_amt_str.empty()) {
-		num_rooms = std::stoi(total_room_amt_str);
-		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
-	}
-	else {
-		// Arvotaan huonemäärä, jos avainta ei löydy
-		int min_rooms_amt{ std::stoi(config.get_value("MIN_ROOMS_AMT")) };
-		int max_rooms_amt{ std::stoi(config.get_value("MAX_ROOMS_AMT")) };
-
-		if (!min_rooms_amt || !max_rooms_amt) {
-			throw ConfigKeyNotFoundException{ "MIN_ROOMS_AMT tai MAX_ROOMS_AMT avainta ei löytynyt" };
-		}
-		num_rooms = get_random_number(min_rooms_amt, max_rooms_amt);
-
-		// Tehdään huonemäärä jaolliseksi kymmenellä, jotta se näyttää selkeämmältä
-		num_rooms =
-			num_rooms % 10 == 0 ?
-			num_rooms :
-			num_rooms - (num_rooms % 10);
-		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
-	}
-	return Hotel{ hotel_name, num_rooms };
+	return Hotel{
+		hotel_name,
+		num_rooms,
+		sale_percentages,
+		min_reservation_id,
+		max_reservation_id
+	};
 
 }
 
@@ -239,6 +239,53 @@ void HotelApp::load_reservations_from_csv()
 		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
 		is_running = false;
 	}
+}
+
+std::vector<double> HotelApp::get_sale_percentages_from_config() const
+{
+	std::vector<double> sale_percentages{};
+	std::string sale_percentages_str{ config.get_value("SALE_PERCENTAGES") };
+	std::istringstream ss{ sale_percentages_str };
+
+	double sale_percentage{};
+	while (ss >> sale_percentage) {
+		sale_percentages.push_back(sale_percentage);
+	}
+
+	if (sale_percentages.empty()) {
+		sale_percentages.emplace_back(0);
+	}
+
+	return sale_percentages;
+}
+
+int HotelApp::get_num_rooms_from_config()
+{
+	std::string total_room_amt_str{ config.get_value("TOTAL_ROOM_AMT") };
+	int num_rooms{};
+
+	if (!total_room_amt_str.empty()) {
+		num_rooms = std::stoi(total_room_amt_str);
+		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
+	}
+	else {
+		// Arvotaan huonemäärä, jos avainta ei löydy
+		int min_rooms_amt{ std::stoi(config.get_value("MIN_ROOMS_AMT")) };
+		int max_rooms_amt{ std::stoi(config.get_value("MAX_ROOMS_AMT")) };
+
+		if (!min_rooms_amt || !max_rooms_amt) {
+			throw ConfigKeyNotFoundException{ "MIN_ROOMS_AMT tai MAX_ROOMS_AMT avainta ei löytynyt" };
+		}
+		num_rooms = get_random_number(min_rooms_amt, max_rooms_amt);
+
+		// Tehdään huonemäärä jaolliseksi kymmenellä, jotta se näyttää selkeämmältä
+		num_rooms =
+			num_rooms % 10 == 0 ?
+			num_rooms :
+			num_rooms - (num_rooms % 10);
+		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
+	}
+	return num_rooms;
 }
 
 

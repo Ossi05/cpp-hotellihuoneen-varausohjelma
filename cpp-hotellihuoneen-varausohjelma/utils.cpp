@@ -90,3 +90,24 @@ void trim(std::string& str)
 		return !std::isspace(ch);
 		}).base(), str.end());
 }
+
+std::string two_column_text(
+	int print_width,
+	const std::string& left_text,
+	int padding_left,
+	std::string seperator,
+	const std::string& right_text,
+	int padding_right)
+{
+	std::ostringstream os;
+
+	os << seperator
+		<< std::setw(padding_left) << " "
+		<< std::left << std::setw(print_width / 2 - padding_right) << left_text
+		<< std::right << std::setw(print_width / 2 - padding_right) << right_text
+		<< std::setw(padding_right) << " "
+		<< seperator << std::endl;
+
+	return os.str();
+
+}

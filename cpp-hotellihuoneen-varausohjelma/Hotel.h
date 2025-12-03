@@ -16,8 +16,8 @@ class Hotel : public IPrintable
 private:
 	static std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> generate_rooms(int num_rooms);
 
-	int min_reservation_id{ 10000 };
-	int max_reservation_id{ 99999 };
+	int min_reservation_id;
+	int max_reservation_id;
 
 	ReservationManager reservation_manager;
 	std::string name;
@@ -30,8 +30,18 @@ private:
 public:
 	virtual void print(std::ostream& os) const override;
 
-	Hotel(const std::string& name, int rooms_to_generate);
+	Hotel(
+		const std::string& name,
+		int rooms_to_generate,
+		const std::vector<double>& sale_percentages,
+		int min_reservation_id = 10000,
+		int max_reservation_id = 99999
+	);
 	virtual ~Hotel() = default;
+
+	const std::vector<double>& get_sale_percentages() const;
+	int get_min_reservation_id() const;
+	int get_max_reservation_id() const;
 
 	// Huoneet
 	size_t get_num_rooms_available() const;

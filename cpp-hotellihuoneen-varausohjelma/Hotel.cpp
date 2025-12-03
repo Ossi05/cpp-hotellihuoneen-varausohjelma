@@ -36,12 +36,19 @@ std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> Hotel::generate
 	return rooms;
 }
 
-Hotel::Hotel(const std::string& name, int rooms_to_generate) :
+Hotel::Hotel(const std::string& name, int rooms_to_generate, const std::vector<double>& sale_percentages,
+	int min_reservation_id, int max_reservation_id) :
 	name{ name },
 	rooms_map{ generate_rooms(rooms_to_generate) },
-	sale_percentages{ 0, 10, 20 }
+	sale_percentages{ sale_percentages },
+	min_reservation_id{ min_reservation_id },
+	max_reservation_id{ max_reservation_id }
 {
 }
+
+const std::vector<double>& Hotel::get_sale_percentages() const { return sale_percentages; }
+int Hotel::get_min_reservation_id() const { return min_reservation_id; }
+int Hotel::get_max_reservation_id() const { return max_reservation_id; }
 
 /*
 	Huoneet
@@ -190,30 +197,20 @@ void Hotel::print(std::ostream& os) const
 	const std::streamsize padding_left{ 2 };
 	const std::streamsize padding_right{ 4 };
 
-	static const auto print_text = [&os](const std::string& left_text, const std::string& right_text = "") {
-		os << "|"
-			<< std::setw(padding_left) << " "
-			<< std::left << std::setw(Menu::print_width / 2 - padding_right) << left_text
-			<< std::right << std::setw(Menu::print_width / 2 - padding_right) << right_text
-			<< std::setw(padding_right) << " "
-			<< "|" << '\n';
-		os << std::right;
-		};
-
 	// Otsikko
-	print_text(name);
+	Menu::print_two_col_text(name);
 	print_line('=', Menu::print_width);
 
 	// Perustietoja
 	const size_t num_rooms{ get_num_rooms() };
 	const size_t rooms_available{ get_num_rooms_available() };
-	print_text("Huoneita 1-" + std::to_string(num_rooms));
-	print_text("Vapaana: " + std::to_string(rooms_available));
-	print_text("Varattu: " + std::to_string(num_rooms - rooms_available));
+	Menu::print_two_col_text("Huoneita 1-" + std::to_string(num_rooms));
+	Menu::print_two_col_text("Vapaana: " + std::to_string(rooms_available));
+	Menu::print_two_col_text("Varattu: " + std::to_string(num_rooms - rooms_available));
 
-	print_text("");
+	Menu::print_two_col_text("");
 
-	print_text("Tyyppi", "Vapaana");
+	Menu::print_two_col_text("Tyyppi", "Vapaana");
 
 	std::cout << std::setfill('-') << std::setw(Menu::print_width) << "" << std::setfill(' ') << std::endl;
 
@@ -223,7 +220,7 @@ void Hotel::print(std::ostream& os) const
 			std::to_string(get_num_rooms_available(room.first))
 			+ "/"
 			+ std::to_string(get_num_rooms(room.first)) };
-		print_text(Room::room_type_data.at(room.first).name, available_text);
+		Menu::print_two_col_text(Room::room_type_data.at(room.first).name, available_text);
 	}
 
 	print_line('=', Menu::print_width);

@@ -55,3 +55,11 @@ void save_to_csv(const std::string& text, const std::string& filename);
 void clear_file(const std::string& filename);
 std::vector<std::string> get_data_from_csv(const std::string& filename);
 void trim(std::string& str);
+std::string two_column_text(
+	int print_width,
+	const std::string& left_text,
+	int padding_left,
+	std::string seperator = "",
+	const std::string& right_text = "",
+	int padding_right = 0
+);
