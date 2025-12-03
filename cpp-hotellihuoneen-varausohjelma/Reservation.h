@@ -11,6 +11,7 @@ class Reservation : public IPrintable
 private:
 	std::weak_ptr<Room> room;
 	const int id;
+	int room_number;
 	const std::string guest_name;
 	const int num_nights;
 
@@ -20,7 +21,7 @@ private:
 public:
 	Reservation(int id,
 		const std::string& guest_name,
-		std::weak_ptr<Room> room,
+		int room_number,
 		int num_nights,
 		double normal_price,
 		double sale_percentage = 0
@@ -38,6 +39,8 @@ public:
 	virtual void print(std::ostream& os) const override;
 	virtual ~Reservation() = default;
 	std::string to_csv() const;
+	void assign_room(std::shared_ptr<Room> room_ptr);
+	void unassign_room();
 
 };
 

@@ -137,11 +137,12 @@ std::shared_ptr<const Reservation> Hotel::create_reservation(const int room_numb
 	auto reservation_ptr = std::make_shared<Reservation>(
 		id,
 		guest_name,
-		room,
+		room_number,
 		num_nights,
 		room->get_price() * num_nights, // Hinta on huoneen hinta * yöt
 		sale_percentage
 	);
+	reservation_ptr->assign_room(room);
 
 	// Insert into map
 	reservations_map.emplace(id, reservation_ptr);
@@ -263,11 +264,12 @@ void Hotel::add_reservation_from_csv_line(std::string csv_line)
 	auto reservation_ptr = std::make_shared<Reservation>(
 		id,
 		guest_name,
-		room,
+		room->get_room_number(),
 		num_nights,
 		normal_price,
 		sale_percentage
 	);
+	reservation_ptr->assign_room(room);
 	reservations_map.emplace(id, reservation_ptr);
 
 }

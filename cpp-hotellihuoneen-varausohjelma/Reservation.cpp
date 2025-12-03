@@ -15,24 +15,18 @@ bool operator==(const Reservation& lhs, const int id)
 Reservation::Reservation(
 	int id,
 	const std::string& guest_name,
-	std::weak_ptr<Room> room,
+	int room_number,
 	int num_nights,
 	double normal_price,
 	double sale_percentage
 )
 	: id{ id },
 	guest_name{ guest_name },
-	room{ room },
+	room_number{ room_number },
 	num_nights{ num_nights },
 	normal_price{ normal_price },
 	sale_percentage{ sale_percentage }
 {
-	if (auto r{ room.lock() }) {
-		r->set_is_occupied(true);
-	}
-	else {
-		throw RoomNotFoundException();
-	}
 }
 
 double Reservation::get_total_price() const
@@ -96,7 +90,7 @@ std::string Reservation::to_csv() const
 		std::ostringstream oss{};
 		oss << id << CSV_SEPERATOR
 			<< guest_name << CSV_SEPERATOR
-			<< r->get_room_number() << CSV_SEPERATOR
+			<< room_number << CSV_SEPERATOR
 			<< num_nights << CSV_SEPERATOR
 			<< normal_price << CSV_SEPERATOR
 			<< sale_percentage;
@@ -105,4 +99,29 @@ std::string Reservation::to_csv() const
 	else {
 		throw RoomNotFoundException();
 	}
+}
+
+void Reservation::assign_room(std::shared_ptr<Room> room_ptr)
+{
+	if (room_ptr->is_occupied()) {
+		throw RoomNotAvailableException{ "Huone " + std::to_string(room_ptr->get_room_number()) + " ei ole vapaana." };
+	}
+	if (auto r{ room.lock() }) {
+		r->set_is_occupied(false);
+	}
+
+	room = room_ptr;
+	room_number = room_ptr->get_room_number();
+	room_ptr->set_is_occupied(true);
+}
+
+void Reservation::unassign_room()
+{
+	if (auto r{ room.lock() }) {
+		r->set_is_occupied(false);
+	}
+	else {
+		throw RoomNotFoundException();
+	}
+	room.reset();
 }

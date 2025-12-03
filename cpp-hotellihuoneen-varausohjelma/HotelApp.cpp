@@ -15,7 +15,6 @@ Hotel HotelApp::loadHotelFromConfig()
 	std::string total_room_amt_str{ config.get_value("TOTAL_ROOM_AMT") };
 	std::string csv_file_name = config.get_value("CSV_FILE_NAME");
 
-
 	int num_rooms{};
 	if (!total_room_amt_str.empty()) {
 		num_rooms = std::stoi(total_room_amt_str);
