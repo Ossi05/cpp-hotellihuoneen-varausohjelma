@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <cctype>
 
-const char CSV_SEPERATOR{ ',' };
+const char CSV_SEPARATOR{ ',' };
 
 void clear_screen()
 {
@@ -95,18 +95,18 @@ std::string two_column_text(
 	int print_width,
 	const std::string& left_text,
 	int padding_left,
-	std::string seperator,
+	std::string separator,
 	const std::string& right_text,
 	int padding_right)
 {
 	std::ostringstream os;
 
-	os << seperator
+	os << separator
 		<< std::setw(padding_left) << " "
 		<< std::left << std::setw(print_width / 2 - padding_right) << left_text
 		<< std::right << std::setw(print_width / 2 - padding_right) << right_text
 		<< std::setw(padding_right) << " "
-		<< seperator << std::endl;
+		<< separator << std::endl;
 
 	return os.str();
 

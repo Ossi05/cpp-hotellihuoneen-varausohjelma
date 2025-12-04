@@ -5,7 +5,7 @@
 
 std::unordered_map<RoomType, RoomTypeData> Room::room_type_data = {
 	{ RoomType::Single, {"Yhden hengen", 100.0} },
-	{ RoomType::Double, {"Kahden hengen", 200.0} }
+	{ RoomType::Double, {"Kahden hengen", 150.0} }
 };
 
 

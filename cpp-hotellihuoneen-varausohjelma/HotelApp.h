@@ -9,28 +9,17 @@
 
 class HotelApp
 {
-public:
-	HotelApp(const std::string& config_file_name);
-	void run();
 private:
-
 	Config config;
 	Menu menu;
 	CSVReservationHandler csv_reservation_handler;
 	Hotel hotel;
-	bool has_csv_file;
 	bool is_running;
 
-
-	Hotel loadHotelFromConfig();
-	void load_reservations_from_csv();
-	int get_num_rooms_from_config();
-	std::vector<double> get_sale_percentages_from_config() const;
-
-	// Valikon toiminnot
+	// Menu actions
 	void handle_exit_program();
 
-	// Varaukset
+	// Reservations
 	void create_reservation();
 	void show_reservations() const;
 	void find_reservation_by_id() const;
@@ -38,4 +27,12 @@ private:
 	void remove_reservation();
 	void print_info() const;
 
+	// Helper functions for loading hotel and reservations from config and csv
+	Hotel loadHotelFromConfig();
+	bool try_load_reservations_from_csv();
+	int get_num_rooms_from_config();
+	std::vector<double> get_sale_percentages_from_config() const;
+public:
+	HotelApp(const std::string& config_file_name);
+	void run();
 };

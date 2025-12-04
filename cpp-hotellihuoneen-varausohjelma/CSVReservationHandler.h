@@ -16,5 +16,6 @@ public:
 	void clear() const;
 	std::vector<std::shared_ptr<Reservation>> load_reservations() const;
 	std::string get_file_name() const;
+	bool has_file_name() const;
 };
 

@@ -14,13 +14,13 @@ const void Menu::print_two_col_text(const std::string& text_left, const std::str
 {
 	const std::streamsize padding_left{ 2 };
 	const std::streamsize padding_right{ 4 };
-	const std::string seperator{ "|" };
+	const std::string separator{ "|" };
 
 	std::cout << two_column_text(
 		Menu::print_width,
 		text_left,
 		padding_left,
-		seperator,
+		separator,
 		text_right,
 		padding_right
 	);

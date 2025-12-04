@@ -5,7 +5,7 @@
 #include <sstream>
 #include <vector>
 
-extern const char CSV_SEPERATOR;
+extern const char CSV_SEPARATOR;
 
 /*
 	Kysyy käyttäjältä inputin ja palauttaa sen
@@ -59,7 +59,7 @@ std::string two_column_text(
 	int print_width,
 	const std::string& left_text,
 	int padding_left,
-	std::string seperator = "",
+	std::string separator = "",
 	const std::string& right_text = "",
 	int padding_right = 0
 );

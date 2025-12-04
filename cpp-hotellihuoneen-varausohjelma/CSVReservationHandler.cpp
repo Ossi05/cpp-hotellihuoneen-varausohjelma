@@ -8,13 +8,13 @@ CSVReservationHandler::CSVReservationHandler(const std::string& file_name) : fil
 
 void CSVReservationHandler::save_reservation(std::shared_ptr<const Reservation> reservation) const
 {
-	if (file_name.empty()) throw FileAccessException{ "CSV-tiedoston nime‰ ei ole m‰‰ritetty" };
+	if (!has_file_name()) throw FileAccessException{ "CSV-tiedoston nime‰ ei ole m‰‰ritetty" };
 	save_to_csv(reservation->to_csv(), file_name);
 }
 
 void CSVReservationHandler::save_all(const std::vector<std::shared_ptr<const Reservation>>& reservations) const
 {
-	if (file_name.empty()) throw FileAccessException{ "CSV-tiedoston nime‰ ei ole m‰‰ritetty" };
+	if (!has_file_name()) throw FileAccessException{ "CSV-tiedoston nime‰ ei ole m‰‰ritetty" };
 	clear();
 	for (const auto res : reservations) {
 		save_reservation(res);
@@ -77,4 +77,9 @@ std::vector<std::shared_ptr<Reservation>> CSVReservationHandler::load_reservatio
 std::string CSVReservationHandler::get_file_name() const
 {
 	return file_name;
+}
+
+bool CSVReservationHandler::has_file_name() const
+{
+	return !file_name.empty();
 }
