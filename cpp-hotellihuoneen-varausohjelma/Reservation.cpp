@@ -6,6 +6,7 @@
 #include <vector>
 #include "utils.h"
 #include "exceptions.hpp"
+#include "CSVReservationHandler.h"
 
 bool operator==(const Reservation& lhs, const int id)
 {
@@ -18,7 +19,7 @@ Reservation Reservation::from_csv(const std::string& csv_line)
 	std::vector<std::string> items{};
 	std::string item{};
 
-	while (std::getline(iss, item, CSV_SEPERATOR)) {
+	while (std::getline(iss, item, CSVReservationHandler::CSV_SEPARATOR)) {
 		items.push_back(item);
 	}
 
@@ -114,11 +115,11 @@ std::string Reservation::to_csv() const
 {
 	if (auto r{ room.lock() }) {
 		std::ostringstream oss{};
-		oss << id << CSV_SEPERATOR
-			<< guest_name << CSV_SEPERATOR
-			<< room_number << CSV_SEPERATOR
-			<< num_nights << CSV_SEPERATOR
-			<< normal_price << CSV_SEPERATOR
+		oss << id << CSVReservationHandler::CSV_SEPARATOR
+			<< guest_name << CSVReservationHandler::CSV_SEPARATOR
+			<< room_number << CSVReservationHandler::CSV_SEPARATOR
+			<< num_nights << CSVReservationHandler::CSV_SEPARATOR
+			<< normal_price << CSVReservationHandler::CSV_SEPARATOR
 			<< sale_percentage;
 		return oss.str();
 	}

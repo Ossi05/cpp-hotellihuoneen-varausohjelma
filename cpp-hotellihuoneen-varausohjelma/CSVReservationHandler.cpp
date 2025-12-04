@@ -2,6 +2,8 @@
 #include "utils.h"
 #include "exceptions.hpp"
 
+const char CSVReservationHandler::CSV_SEPARATOR{ ',' };
+
 CSVReservationHandler::CSVReservationHandler(const std::string& file_name) : file_name{ file_name }
 {
 }

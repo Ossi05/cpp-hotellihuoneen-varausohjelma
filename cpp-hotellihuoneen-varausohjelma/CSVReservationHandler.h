@@ -9,6 +9,7 @@ class CSVReservationHandler
 private:
 	std::string file_name;
 public:
+	static const char CSV_SEPARATOR;
 	CSVReservationHandler(const std::string& file_name);
 	void save_reservation(std::shared_ptr<const Reservation> reservation) const;
 	void save_all(const std::vector<std::shared_ptr<const Reservation>>& reservations) const;

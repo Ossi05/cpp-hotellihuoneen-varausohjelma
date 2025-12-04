@@ -5,21 +5,22 @@
 #include <sstream>
 #include <vector>
 
-extern const char CSV_SEPARATOR;
-
 /*
-	Kysyy käyttäjältä inputin ja palauttaa sen
+	Asks user for input and returns it
 
-	@param msg          Viesti, joka näytetään käyttäjälle syötettä pyydettäessä.
-	@param error_msg    Viesti, joka näytetään, jos käyttäjä antaa virheellisen syötteen (oletus: "Virheellinen syöte.").
-	@param allow_empty  Jos true, tyhjä syöte hyväksytään.
-	@param validator    Valinnainen funktio, jolla voidaan tarkistaa syötteen kelpoisuus. Palauttaa true, jos syöte on hyväksyttävä.
-
-	@return Käyttäjän syöttämä arvo tyyppiä T.
+	Params:
+		msg: message to display to the usger
+		error_msg: message to display on invalid input
+		allow_empty: if empty input is allowed (default: false)
+		validator: function to validate input (default: nullptr)
 */
 template <typename T>
-T get_input(const std::string& msg, const std::string& error_msg = "Virheellinen syöte.", const bool allow_empty = false, const std::function<bool(T&)> validator = nullptr) {
-
+T get_input(
+	const std::string& msg,
+	const std::string& error_msg = "Virheellinen syöte.",
+	const bool allow_empty = false,
+	const std::function<bool(T&)> validator = nullptr
+) {
 	T value{};
 	while (true) {
 		std::cout << msg;

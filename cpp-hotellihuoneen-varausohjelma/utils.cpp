@@ -8,8 +8,6 @@
 #include <algorithm>
 #include <cctype>
 
-const char CSV_SEPARATOR{ ',' };
-
 void clear_screen()
 {
 	system("CLS");
