@@ -5,6 +5,9 @@
 #include <vector>
 #include <functional>
 
+/*
+	Manages reservations.
+*/
 class ReservationManager
 {
 private:

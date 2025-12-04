@@ -4,6 +4,9 @@
 #include <vector>
 #include <memory>
 
+/*
+	Handles saving and loading reservations to and from a CSV file.
+*/
 class CSVReservationHandler
 {
 private:

@@ -2,6 +2,10 @@
 #include <stdexcept>
 #include <string>
 
+/*
+	This file contains all custom exception classes
+*/
+
 class RoomNotFoundException : public std::runtime_error {
 public:
 	explicit RoomNotFoundException(const std::string& msg = "Huonetta ei löytynyt")

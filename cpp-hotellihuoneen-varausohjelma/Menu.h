@@ -3,6 +3,9 @@
 #include <string>
 #include "MenuOption.h"
 
+/*
+	Menu class that displays options and handles user input.
+*/
 class Menu
 {
 private:

@@ -7,6 +7,9 @@
 #include "Config.h"
 #include "CSVReservationHandler.h"
 
+/*
+	HotelApp class manages the main program
+*/
 class HotelApp
 {
 private:

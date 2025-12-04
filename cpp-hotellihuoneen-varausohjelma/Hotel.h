@@ -10,7 +10,9 @@
 #include <memory>
 #include "ReservationManager.h"
 
-
+/*
+	Hotel class that manages rooms and reservations.
+*/
 class Hotel : public IPrintable
 {
 private:

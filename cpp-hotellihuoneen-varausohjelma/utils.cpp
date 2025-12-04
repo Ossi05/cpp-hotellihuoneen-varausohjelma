@@ -31,13 +31,14 @@ void print_line(char c, int width)
 	std::cout << std::setfill(c) << std::setw(width) << "" << std::endl << std::setfill(' ');
 }
 
-std::string to_lower(const std::string& str) {
+std::string to_lower(const std::string& str) { // Makes a string lowercase
 	std::string result{ str };
 	std::transform(result.begin(), result.end(), result.begin(),
 		[](char c) { return std::tolower(c); });
 	return result;
 }
 
+// Appends text to a CSV file
 void save_to_csv(const std::string& text, const std::string& filename)
 {
 	std::ofstream out_file{ filename, std::ios::app };
@@ -89,6 +90,10 @@ void trim(std::string& str)
 		}).base(), str.end());
 }
 
+/*
+	Prints two columns of text, for example:
+	word1           word2
+*/
 std::string two_column_text(
 	int print_width,
 	const std::string& left_text,

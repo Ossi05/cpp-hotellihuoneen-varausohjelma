@@ -2,11 +2,15 @@
 #include <string>
 #include <unordered_map>
 
+/*
+	Manages configuration settings stored in a file.
+	format: key=value
+*/
 class Config
 {
 private:
 	std::string config_file_name;
-	std::unordered_map<std::string, std::string> config_map;
+	std::unordered_map<std::string, std::string> config_map; // Stores key-value pairs in a map during runtime
 	void load_config();
 	void save_config() const;
 
