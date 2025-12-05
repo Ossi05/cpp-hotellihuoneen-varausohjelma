@@ -17,6 +17,7 @@ public:
 	const static void print_two_col_text(const std::string& text_left, const std::string& text_right = "");
 
 	Menu(const std::vector<MenuOption>& options);
+
 	void print_menu_options() const;
 	int get_menu_choice() const;
 	void handle_choice(int choice) const;

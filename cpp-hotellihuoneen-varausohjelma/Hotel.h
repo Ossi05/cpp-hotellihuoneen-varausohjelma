@@ -18,9 +18,6 @@ class Hotel : public IPrintable
 private:
 	static std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> generate_rooms(int num_rooms);
 
-	int min_reservation_id;
-	int max_reservation_id;
-
 	ReservationManager reservation_manager;
 	std::string name;
 	std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>> rooms_map;
@@ -54,10 +51,11 @@ public:
 
 	// Varaukset
 	void list_reservations() const;
+	void remove_reservation(int id);
+	bool has_available_reservation_ids() const;
 	std::shared_ptr<const Reservation> get_reservation_by_id(int reservation_id) const;
 	std::vector<std::shared_ptr<const Reservation>> get_reservations_by_guest_name(const std::string& guest_name) const;
 	std::shared_ptr<const Reservation> create_reservation(const int room_number, const std::string& guest_name, const int num_nights);
-	void remove_reservation(int id);
 	std::vector<std::shared_ptr<const Reservation>> get_all_reservations() const;
 };
 

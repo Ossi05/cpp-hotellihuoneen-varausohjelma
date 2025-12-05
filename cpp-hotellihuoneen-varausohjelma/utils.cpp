@@ -26,7 +26,7 @@ int get_random_number(int min, int max)
 	return dis(gen);
 }
 
-void print_line(char c, int width)
+void print_line(char c, int width) // Prints a line of characters
 {
 	std::cout << std::setfill(c) << std::setw(width) << "" << std::endl << std::setfill(' ');
 }
@@ -60,7 +60,8 @@ void clear_file(const std::string& filename)
 	out_file.close();
 }
 
-std::vector<std::string> get_data_from_csv(const std::string& filename)
+// Returns csv rows as a vector of strings
+std::vector<std::string> get_csv_rows(const std::string& filename)
 {
 	std::ifstream in_file{ filename };
 
@@ -80,37 +81,36 @@ std::vector<std::string> get_data_from_csv(const std::string& filename)
 
 void trim(std::string& str)
 {
-	// Poistetaan alusta välilyönnit
+	// Remove whitespace from the beginning
 	str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) {
 		return !std::isspace(ch);
 		}));
-	// Poistetaan lopusta välilyönnit
+	// Remove whitespace from the end
 	str.erase(std::find_if(str.rbegin(), str.rend(), [](unsigned char ch) {
 		return !std::isspace(ch);
 		}).base(), str.end());
 }
 
 /*
-	Prints two columns of text, for example:
+	Returns two columns of text, for example:
 	word1           word2
 */
 std::string two_column_text(
 	int print_width,
 	const std::string& left_text,
 	int padding_left,
-	std::string separator,
+	std::string border,
 	const std::string& right_text,
 	int padding_right)
 {
 	std::ostringstream os;
 
-	os << separator
+	os << border
 		<< std::setw(padding_left) << " "
 		<< std::left << std::setw(print_width / 2 - padding_right) << left_text
 		<< std::right << std::setw(print_width / 2 - padding_right) << right_text
 		<< std::setw(padding_right) << " "
-		<< separator << std::endl;
+		<< border << std::endl;
 
 	return os.str();
-
 }

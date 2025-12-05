@@ -16,10 +16,10 @@ void Config::load_config()
 	while (std::getline(file, line)) {
 		std::istringstream iss{ line };
 		std::string key{};
-		if (std::getline(iss, key, '=')) { // Avain ja arvo erotetaan = merkillä
+		if (std::getline(iss, key, '=')) { // Key and value are separated by "="
 			std::string value{};
 			if (std::getline(iss, value)) {
-				// Poistetaan ylimääräiset välilyönnit
+				// Remove whitespace
 				trim(key);
 				trim(value);
 				config_map[key] = value;
@@ -37,10 +37,10 @@ Config::Config(const std::string& config_file_name) :
 std::string Config::get_value(const std::string& key) const
 {
 	try {
-		return config_map.at(key); // Palautetaan arvo, jos avain löytyy
+		return config_map.at(key);
 	}
 	catch (const std::out_of_range) {
-		return ""; // Avainta ei löytynyt
+		return ""; // Key not found
 	}
 }
 

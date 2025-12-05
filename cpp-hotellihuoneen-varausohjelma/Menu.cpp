@@ -5,26 +5,9 @@
 #include "MenuOption.h"
 #include "utils.h"
 #include "exceptions.hpp"
-#include <iostream>
 #include <string>
 
 const int Menu::print_width{ 45 };
-
-const void Menu::print_two_col_text(const std::string& text_left, const std::string& text_right)
-{
-	const std::streamsize padding_left{ 2 };
-	const std::streamsize padding_right{ 4 };
-	const std::string separator{ "|" };
-
-	std::cout << two_column_text(
-		Menu::print_width,
-		text_left,
-		padding_left,
-		separator,
-		text_right,
-		padding_right
-	);
-}
 
 Menu::Menu(const std::vector<MenuOption>& options)
 	: menu_options{ options }
@@ -57,10 +40,30 @@ void Menu::handle_choice(int choice) const
 	if (choice > static_cast<int>(menu_options.size()) || choice < 0) {
 		throw MenuOptionNotFoundException();
 	}
-	// Kutsutaan valittua toimintoa
 	const MenuOption& option{ menu_options.at(choice) };
 	print_title(option.name);
-	option.action();
+	option.action(); // Call MenuOption's action
+}
+
+/*
+	Prints two column text
+	example:
+		| Left text       Right text |
+*/
+const void Menu::print_two_col_text(const std::string& text_left, const std::string& text_right)
+{
+	const std::streamsize padding_left{ 2 };
+	const std::streamsize padding_right{ 4 };
+	const std::string border{ "|" };
+
+	std::cout << two_column_text(
+		Menu::print_width,
+		text_left,
+		padding_left,
+		border,
+		text_right,
+		padding_right
+	);
 }
 
 void Menu::print_title(const std::string title) const

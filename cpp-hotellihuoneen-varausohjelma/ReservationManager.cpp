@@ -4,14 +4,43 @@
 #include "utils.h"
 #include <vector>
 #include "exceptions.hpp"
+#include <algorithm>
+
+ReservationManager::ReservationManager(int min_reservation_id, int max_reservation_id) :
+	min_reservation_id{ min_reservation_id },
+	max_reservation_id{ max_reservation_id }
+{
+}
+
+void ReservationManager::add_reservation(std::shared_ptr<Reservation> reservation)
+{
+	reservations_map.emplace(reservation->get_id(), reservation);
+}
 
 void ReservationManager::remove_reservation(int id)
 {
 	auto reservation = get_reservation_by_id(id);
 	reservation->unassign_room();
-
-	// Poistetaan huone
 	reservations_map.erase(id);
+}
+
+bool ReservationManager::reservation_id_exists(int id) const
+{
+	return reservations_map.find(id) != reservations_map.end();
+}
+bool ReservationManager::has_available_reservation_ids() const
+{	// Checks if there are available reservation IDs based on the vector's size
+	return reservations_map.size() < static_cast<size_t>(max_reservation_id - min_reservation_id + 1);
+}
+int ReservationManager::get_min_reservation_id() const { return min_reservation_id; }
+int ReservationManager::get_max_reservation_id() const { return max_reservation_id; }
+int ReservationManager::get_available_reservation_id() const
+{
+	for (int id = min_reservation_id; id <= max_reservation_id; ++id) {
+		if (reservation_id_exists(id)) { continue; }
+		return id;
+	}
+	throw NoAvailableReservationIdsException{};
 }
 
 std::shared_ptr<Reservation> ReservationManager::get_reservation_by_id(int reservation_id) const
@@ -36,15 +65,6 @@ std::vector<std::shared_ptr<const Reservation>> ReservationManager::get_reservat
 	return results;
 }
 
-bool ReservationManager::reservation_id_exists(int id) const
-{
-	return reservations_map.find(id) != reservations_map.end();
-}
-
-void ReservationManager::add_reservation(std::shared_ptr<Reservation> reservation)
-{
-	reservations_map.emplace(reservation->get_id(), reservation);
-}
 
 std::vector<std::shared_ptr<const Reservation>> ReservationManager::get_all_reservations() const {
 	std::vector<std::shared_ptr<const Reservation>> results;
@@ -79,7 +99,7 @@ void ReservationManager::list_reservations() const
 		const Reservation& reservation{ *pair.second };
 		std::cout << std::setw(field1_width) << std::left << reservation.get_id()
 			<< std::setw(field2_width) << std::left << reservation.get_guest_name()
-			<< std::setw(field3_width) << std::left << Room::room_type_data.at(reservation.get_room_type()).name
+			<< std::setw(field3_width) << std::left << Room::ROOM_TYPE_DATA.at(reservation.get_room_type()).name
 			<< std::setw(field4_width) << std::right << reservation.get_room_number()
 			<< std::endl;
 

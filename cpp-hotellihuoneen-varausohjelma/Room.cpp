@@ -3,11 +3,10 @@
 #include <iostream>
 
 
-std::unordered_map<RoomType, RoomTypeData> Room::room_type_data = {
+std::unordered_map<RoomType, RoomTypeData> Room::ROOM_TYPE_DATA = {
 	{ RoomType::Single, {"Yhden hengen", 100.0} },
 	{ RoomType::Double, {"Kahden hengen", 150.0} }
 };
-
 
 bool operator==(const Room& lhs, const int room_number)
 {
@@ -29,4 +28,4 @@ int Room::get_room_number() const { return this->room_number; }
 
 RoomType Room::get_room_type() const { return this->type; }
 
-double Room::get_price(RoomType type) { return Room::room_type_data.at(type).price; }
+double Room::get_price(RoomType type) { return Room::ROOM_TYPE_DATA.at(type).price; }

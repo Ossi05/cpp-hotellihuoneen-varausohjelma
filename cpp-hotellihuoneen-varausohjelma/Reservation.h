@@ -9,7 +9,7 @@ class Reservation : public IPrintable
 	friend bool operator==(const Reservation& lhs, const int id);
 
 private:
-	std::weak_ptr<Room> room;
+	std::weak_ptr<Room> room_ptr;
 	const int id;
 	int room_number;
 	const std::string guest_name;
@@ -29,7 +29,7 @@ public:
 		double sale_percentage = 0
 	);
 
-	std::string get_guest_name() const;
+	const std::string& get_guest_name() const;
 	int get_room_number() const;
 	double get_normal_price() const;
 	double get_sale_percentage() const;

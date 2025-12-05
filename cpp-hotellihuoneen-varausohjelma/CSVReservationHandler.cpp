@@ -8,6 +8,11 @@ CSVReservationHandler::CSVReservationHandler(const std::string& file_name) : fil
 {
 }
 
+
+void CSVReservationHandler::clear() const { clear_file(file_name); }
+bool CSVReservationHandler::has_file_name() const { return !file_name.empty(); }
+std::string CSVReservationHandler::get_file_name() const { return file_name; }
+
 void CSVReservationHandler::save_reservation(std::shared_ptr<const Reservation> reservation) const
 {
 	if (!has_file_name()) throw FileAccessException{ "CSV-tiedoston nime‰ ei ole m‰‰ritetty" };
@@ -26,39 +31,37 @@ void CSVReservationHandler::save_all(const std::vector<std::shared_ptr<const Res
 void CSVReservationHandler::remove_reservation(int id) const
 {
 	if (file_name.empty()) throw FileAccessException{ "CSV-tiedoston nime‰ ei ole m‰‰ritetty" };
-	auto data{ get_data_from_csv(file_name) };
+	auto data{ get_csv_rows(file_name) };
 
-	// Poistetaan kaikki rivit, joiden id vastaa annettua id:t‰
+	// Delete rows with matching ID
 	data.erase(
 		std::remove_if(data.begin(), data.end(),
 			[id](const std::string& line) {
 				std::istringstream iss(line);
 				int line_id;
-				if (!(iss >> line_id)) return false; // Virheellinen rivi, ei poisteta
-				return line_id == id;
+				if (!(iss >> line_id)) return false; // Failed to read ID
+				return line_id == id; // Check if IDs match
 			}),
 		data.end()
 	);
 
-	// Tallennetaan tiedot takaisin tiedostoon
+	// Save reservations back to file
 	clear();
 	for (const auto& line : data) {
 		save_to_csv(line, file_name);
 	}
 }
 
-void CSVReservationHandler::clear() const
-{
-	clear_file(file_name);
-}
-
+/*
+	Reads reservations from a CSV file
+*/
 std::vector<std::shared_ptr<Reservation>> CSVReservationHandler::load_reservations() const
 {
 	std::vector<std::shared_ptr<Reservation>> reservations;
 
 	if (file_name.empty()) throw FileAccessException{ "CSV-tiedoston nime‰ ei ole m‰‰ritetty" };
 	try {
-		auto data{ get_data_from_csv(file_name) };
+		auto data{ get_csv_rows(file_name) };
 		for (const auto& line : data) {
 			reservations.push_back(
 				std::make_shared<Reservation>(Reservation::from_csv(line))
@@ -74,14 +77,4 @@ std::vector<std::shared_ptr<Reservation>> CSVReservationHandler::load_reservatio
 		// Virheellinen CSV-muoto
 		throw;
 	}
-}
-
-std::string CSVReservationHandler::get_file_name() const
-{
-	return file_name;
-}
-
-bool CSVReservationHandler::has_file_name() const
-{
-	return !file_name.empty();
 }

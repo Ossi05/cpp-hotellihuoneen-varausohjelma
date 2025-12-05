@@ -17,17 +17,15 @@ HotelApp::HotelApp(const std::string& config_file_name) :
 	hotel{ loadHotelFromConfig() },
 	is_running{ false },
 	menu{ { // Menu options
-		{ "Tietoa hotellista", [this]() { print_info(); }},
 		{ "Luo varaus", [this]() { create_reservation(); } },
 		{ "Näytä kaikki varaukset", [this]() { show_reservations(); } },
 		{ "Hae varaus varausnumerolla", [this]() { find_reservation_by_id(); } },
 		{ "Hae varauksia varaajan nimellä", [this]() { find_reservations_by_name(); } },
 		{ "Poista varaus", [this]() { remove_reservation(); } },
-		{ "Poistu ohjelmasta", [this]() { handle_exit_program(); }}
+		{ "Poistu ohjelmasta", [this]() { handle_exit_program(); }},
 	} }
 {
 }
-
 
 /*
 	HotelApp's main program loop
@@ -87,11 +85,15 @@ void HotelApp::create_reservation()
 		std::cerr << "Huoneita ei ole vapaana";
 		return;
 	}
+	if (!hotel.has_available_reservation_ids()) {
+		std::cerr << "Ei vapaita varausnumeroita";
+		return;
+	}
 
 	// 2. Get reservation details from user
 	// Print room types
 	std::cout << "Valitse huoneentyypi:\n";
-	for (const auto& room_data : Room::room_type_data) {
+	for (const auto& room_data : Room::ROOM_TYPE_DATA) {
 		RoomType room_type = room_data.first;
 		size_t num_available{ hotel.get_num_rooms_available(room_type) };
 		std::cout
@@ -104,7 +106,7 @@ void HotelApp::create_reservation()
 	RoomType room_type{};
 	while (true) {
 		int input{ get_input<int>("Huoneentyyppi: ", "Virheellinen syöte", false,
-			[](int num) {return num >= 1 && num <= Room::room_type_data.size(); }) - 1 };
+			[](int num) {return num >= 1 && num <= Room::ROOM_TYPE_DATA.size(); }) - 1 };
 
 		room_type = static_cast<RoomType>(input);
 		size_t num_rooms_available{ hotel.get_num_rooms_available(room_type) };
@@ -291,16 +293,17 @@ bool HotelApp::try_load_reservations_from_csv()
 	}
 	catch (const ReservationIdAlreadyExistsException& e) {
 		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		return false;
 	}
 	catch (const RoomNotFoundException& e) {
 		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		return false;
 	}
 	catch (const RoomNotAvailableException& e) {
 		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
-		return false;
 	}
+	catch (const NoAvailableReservationIdsException& e) {
+		std::cerr << "CSV-tiedoston latauksessa tapahtui virhe: " << e.what() << std::endl;
+	}
+	return false;
 }
 
 /*

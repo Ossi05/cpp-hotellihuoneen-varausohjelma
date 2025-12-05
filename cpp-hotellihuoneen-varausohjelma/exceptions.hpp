@@ -61,3 +61,10 @@ public:
 		: std::runtime_error(msg) {}
 	virtual ~ConfigKeyNotFoundException() = default;
 };
+
+class NoAvailableReservationIdsException : public std::runtime_error {
+public:
+	explicit NoAvailableReservationIdsException(const std::string& msg = "Kaikki varaus-ID:t on käytetty.")
+		: std::runtime_error(msg) {}
+	virtual ~NoAvailableReservationIdsException() = default;
+};
