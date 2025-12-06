@@ -74,12 +74,12 @@ MIN_RESERVATION_ID=10000
 - `HOTEL_NAME` - Hotellin nimi
 - `MIN_ROOMS_AMT` - Huoneiden vähimmäismäärä
 - `MAX_ROOMS_AMT` - Huoneiden enimmäismäärä
-- `SALE_PERCENTAGES` - Alennusprosentit (välilyönnillä erotettuna)
 - `MIN_RESERVATION_ID` - Pienin varausnumero
 - `MAX_RESERVATION_ID` - Suurin varausnumero
 
 **Valinnaiset parametrit:**
 
+- `SALE_PERCENTAGES` - Alennusprosentit (välilyönnillä erotettuna)
 - `CSV_FILE_NAME` - CSV-tiedoston nimi varauksien tallennukseen
 - `TOTAL_ROOM_AMT` - Huoneiden tarkka määrä (muutoin arvotaan MIN ja MAX väliltä)
 
