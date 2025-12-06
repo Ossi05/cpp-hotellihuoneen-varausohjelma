@@ -151,7 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="config.cfg" />
-    <None Include="testi.csv" />
+    <None Include="hotelli.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

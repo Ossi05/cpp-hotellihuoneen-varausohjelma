@@ -100,7 +100,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="testi.csv" />
     <None Include="config.cfg" />
+    <None Include="hotelli.csv" />
   </ItemGroup>
 </Project>
