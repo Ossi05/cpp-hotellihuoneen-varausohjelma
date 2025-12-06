@@ -18,7 +18,7 @@ void Menu::print_menu_options() const
 {
 	for (size_t i = 0; i < menu_options.size(); i++)
 	{
-		std::cout << i + 1 << " " << menu_options.at(i).name << std::endl;
+		std::cout << "(" << i + 1 << ") " << menu_options.at(i).name << std::endl;
 	}
 	std::cout << std::setfill('-') << std::setw(Menu::print_width) << "" << std::setfill(' ') << std::endl;
 }
