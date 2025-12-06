@@ -17,6 +17,7 @@ HotelApp::HotelApp(const std::string& config_file_name) :
 	hotel{ loadHotelFromConfig() },
 	is_running{ false },
 	menu{ { // Menu options
+		{ "Tietoja hotellista", [this]() { print_info(); } },
 		{ "Luo varaus", [this]() { create_reservation(); } },
 		{ "Näytä kaikki varaukset", [this]() { show_reservations(); } },
 		{ "Hae varaus varausnumerolla", [this]() { find_reservation_by_id(); } },
