@@ -11,7 +11,8 @@
 /*
 	Initialize Hotel app
 */
-HotelApp::HotelApp(const std::string& config_file_name) :
+HotelApp::HotelApp(const std::string& config_file_name) try
+	:
 	config{ config_file_name },
 	csv_reservation_handler{ config.get_value("CSV_FILE_NAME") },
 	hotel{ loadHotelFromConfig() },
@@ -26,6 +27,9 @@ HotelApp::HotelApp(const std::string& config_file_name) :
 		{ "Poistu ohjelmasta", [this]() { handle_exit_program(); }},
 	} }
 {
+}
+catch (const std::exception& e) {
+	throw HotelAppInitializationError(e.what());
 }
 
 /*
@@ -260,9 +264,19 @@ void HotelApp::handle_exit_program()
 Hotel HotelApp::loadHotelFromConfig()
 {
 	std::string hotel_name{ config.get_value("HOTEL_NAME") };
+	int min_reservation_id{};
+	int max_reservation_id{};
+	try {
+		int min_reservation_id{ std::stoi(config.get_value("MIN_RESERVATION_ID")) };
+		int max_reservation_id{ std::stoi(config.get_value("MAX_RESERVATION_ID")) };
+	}
+	catch (const std::invalid_argument&) {
+		throw ConfigKeyNotFoundException{
+			"MIN_RESERVATION_ID tai MAX_RESERVATION_ID avainta ei löytynyt "
+			+ config.get_file_name()
+			+ " tiedostosta" };
+	}
 	int num_rooms{ get_num_rooms_from_config() };
-	int min_reservation_id{ std::stoi(config.get_value("MIN_RESERVATION_ID")) };
-	int max_reservation_id{ std::stoi(config.get_value("MAX_RESERVATION_ID")) };
 	std::vector<double> sale_percentages{ get_sale_percentages_from_config() };
 
 	return Hotel{
@@ -344,19 +358,32 @@ int HotelApp::get_num_rooms_from_config()
 	}
 	else {
 		// Generate random number of rooms between MIN_ROOMS_AMT and MAX_ROOMS_AMT
-		int min_rooms_amt{ std::stoi(config.get_value("MIN_ROOMS_AMT")) };
-		int max_rooms_amt{ std::stoi(config.get_value("MAX_ROOMS_AMT")) };
-
-		if (!min_rooms_amt || !max_rooms_amt) {
-			throw ConfigKeyNotFoundException{ "MIN_ROOMS_AMT tai MAX_ROOMS_AMT avainta ei löytynyt" };
+		int min_rooms_amt{};
+		int max_rooms_amt{};
+		try {
+			min_rooms_amt = { std::stoi(config.get_value("MIN_ROOMS_AMT")) };
+			max_rooms_amt = { std::stoi(config.get_value("MAX_ROOMS_AMT")) };
 		}
+		catch (const std::invalid_argument&) {
+			throw ConfigKeyNotFoundException{
+				"MIN_ROOMS_AMT tai MAX_ROOMS_AMT avainta ei löytynyt "
+				+ config.get_file_name()
+				+ " tiedostosta" };
+		}
+		if (min_rooms_amt > max_rooms_amt) {
+			throw std::invalid_argument{
+				"MIN_ROOMS_AMT ei voi olla suurempi kuin MAX_ROOMS_AMT" };
+		}
+
 		num_rooms = get_random_number(min_rooms_amt, max_rooms_amt);
 
-		// Making rooms divisible by 10, so it looks better
-		num_rooms =
-			num_rooms % 10 == 0 ?
-			num_rooms :
-			num_rooms - (num_rooms % 10);
+		if (num_rooms >= 10) {
+			// Making rooms divisible by 10, so it looks better
+			num_rooms =
+				num_rooms % 10 == 0 ?
+				num_rooms :
+				num_rooms - (num_rooms % 10);
+		}
 		config.set_value("TOTAL_ROOM_AMT", std::to_string(num_rooms));
 	}
 	return num_rooms;

@@ -9,7 +9,10 @@ void Config::load_config()
 {
 	std::ifstream file{ config_file_name };
 	if (!file) {
-		throw FileAccessException("Config tiedoston avaaminen epäonnistui: " + config_file_name);
+		throw FileAccessException(
+			"Config tiedoston avaaminen epäonnistui! Tarkista, että "
+			+ config_file_name
+			+ " tiedosto on olemassa");
 	}
 
 	std::string line{};
@@ -60,4 +63,8 @@ void Config::save_config() const
 	for (const auto& pair : config_map) {
 		file << pair.first << "=" << pair.second << std::endl;
 	}
+}
+
+const std::string& Config::get_file_name() const {
+	return config_file_name;
 }

@@ -55,6 +55,14 @@ public:
 	virtual ~FileAccessException() = default;
 };
 
+class HotelAppInitializationError : public std::runtime_error {
+public:
+	explicit HotelAppInitializationError(const std::string& msg = "Config-tiedostoa ei löytynyt")
+		: runtime_error(msg) {
+	}
+	virtual ~HotelAppInitializationError() = default;
+};
+
 class ConfigKeyNotFoundException : public std::runtime_error {
 public:
 	explicit ConfigKeyNotFoundException(const std::string& msg = "Config avainta ei löytynyt")

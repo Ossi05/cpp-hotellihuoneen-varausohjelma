@@ -20,6 +20,10 @@ void wait_for_input()
 
 int get_random_number(int min, int max)
 {
+	if (min > max) {
+		throw std::invalid_argument{ "get_random_number: min ei voi olla suurempi kuin max" };
+	}
+
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(min, max);
