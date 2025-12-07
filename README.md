@@ -61,11 +61,12 @@ Esimerkki tiedoston sisällöstä:
 HOTEL_NAME=C++ hotelli
 MIN_ROOMS_AMT=40
 MAX_ROOMS_AMT=300
-CSV_FILE_NAME=testi.csv
+CSV_FILE_NAME=hotelli.csv
 SALE_PERCENTAGES=0 10 20
 MAX_RESERVATION_ID=99999
 MIN_RESERVATION_ID=10000
 ```
+
 
 **Konfiguraatioparametrit:**
 
@@ -82,6 +83,12 @@ MIN_RESERVATION_ID=10000
 - `SALE_PERCENTAGES` - Alennusprosentit (välilyönnillä erotettuna)
 - `CSV_FILE_NAME` - CSV-tiedoston nimi varauksien tallennukseen
 - `TOTAL_ROOM_AMT` - Huoneiden tarkka määrä (muutoin arvotaan MIN ja MAX väliltä)
+
+
+> [!TIP]
+> Jos latasit, Github-repositorion, `config.cfg` tiedostossa on valmiiksi määritelty `TOTAL_ROOM_AMT`, joten huonemäärää ei arvota uusiksi. Mikäli haluat arpoa huonemäärän uudelleen, poista tämä arvo config.cfg-tiedostosta.
+> 
+> Lisäksi `hotelli.csv` tiedostossa on valmiiksi muutama varaus. Tyhjennä tiedosto tai muuta `CSV_FILE_NAME` kohdan arvoa, jotta varaukset poistuvat.
 
 ---
 
