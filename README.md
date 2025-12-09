@@ -108,16 +108,16 @@ MIN_RESERVATION_ID=10000
 #### Huoneiden tallennus:
 
 - Huoneet tallennetaan `Hotel`-luokan sisällä `std::unordered_map<RoomType, std::vector<std::shared_ptr<Room>>>` -rakenteeseen
-  -- Avaimena on huoneentyyppi
-  -- Arvona on huoneet
+  - Avaimena on huoneentyyppi
+  - Arvona on huoneet
 - Huoneet luodaan ohjelman käynnistyessä `Hotel::generate_rooms()` -funktiossa
 - Huoneet jaetaan tasaisesti eri huonetyyppeihin
 
 #### Varausten tallennus:
 
 - Varaukset tallennetaan `ReservationManager`-luokan sisällä `std::unordered_map<int, std::shared_ptr<Reservation>>` -rakenteeseen
-  -- Avaimena on varausnumero
-  -- Arvona on varaukset
+   -  Avaimena on varausnumero
+   -  Arvona on varaukset
 - Varaukset tallennetaan myös CSV-tiedostoon haluttaessa. Tallennuksesta vastaa `CSVReservationHandler` luokka
 
 #### Varausten hallinta
